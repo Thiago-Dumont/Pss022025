@@ -1,266 +1,436 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PSS 02 2025</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PSS 02 2025</title>
 
-<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
 
-<style>
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background: #eef2f7;
-  color: #222;
-}
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #eef2f7;
+      color: #222;
+    }
 
-.container {
-  max-width: 700px;
-  margin: auto;
-  padding: 16px;
-}
+    .container {
+      max-width: 700px;
+      margin: auto;
+      padding: 16px;
+    }
 
-.topo {
-  background: linear-gradient(135deg, #2563eb, #3b82f6);
-  color: white;
-  padding: 20px;
-  border-radius: 18px;
-  text-align: center;
-  margin-bottom: 16px;
-}
+    .topo {
+      background: linear-gradient(135deg, #2563eb, #3b82f6);
+      color: white;
+      padding: 20px;
+      border-radius: 18px;
+      text-align: center;
+      margin-bottom: 16px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+    }
 
-.topo h1 {
-  margin: 0;
-  font-size: 24px;
-}
+    .topo h1 {
+      margin: 0;
+      font-size: 26px;
+    }
 
-input, select, button {
-  width: 100%;
-  padding: 12px;
-  margin-top: 10px;
-  border-radius: 12px;
-  border: none;
-  font-size: 15px;
-}
+    .topo p {
+      margin: 6px 0 0;
+      font-size: 13px;
+    }
 
-button {
-  background: #2563eb;
-  color: white;
-  font-weight: bold;
-}
+    #tituloCargos {
+      font-size: 12px;
+      margin-top: 8px;
+      opacity: 0.95;
+      line-height: 1.5;
+    }
 
-/* =========================
-   AVISO IR
-========================= */
+    .card {
+      background: white;
+      padding: 14px;
+      border-radius: 16px;
+      margin-bottom: 12px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.05);
+    }
 
-.aviso-ir {
-  background: linear-gradient(135deg, #f59e0b, #f97316);
-  color: white;
-  padding: 14px;
-  border-radius: 16px;
-  margin-bottom: 16px;
-  text-align: center;
-}
+    .link-card {
+      background: white;
+      padding: 14px;
+      border-radius: 16px;
+      margin-bottom: 12px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.05);
+      border-left: 5px solid #16a34a;
+    }
 
-.aviso-ir strong {
-  display: block;
-  margin-bottom: 6px;
-}
+    .link-card h3 {
+      margin: 0 0 8px;
+      font-size: 16px;
+      color: #111827;
+    }
 
-.aviso-ir a {
-  color: white;
-  font-weight: bold;
-}
+    .link-card p {
+      margin: 0 0 10px;
+      font-size: 14px;
+      color: #4b5563;
+    }
 
-/* =========================
-   POPUP IR
-========================= */
+    .link-pagina {
+      display: inline-block;
+      width: 100%;
+      text-align: center;
+      text-decoration: none;
+      background: #16a34a;
+      color: white;
+      font-weight: bold;
+      padding: 14px;
+      border-radius: 12px;
+      box-sizing: border-box;
+    }
 
-.popup-ir-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.6);
-  display: none;
-  align-items: center;
-  justify-content: center;
-  z-index: 99999;
-}
+    input, select {
+      width: 100%;
+      padding: 14px;
+      border-radius: 12px;
+      border: 1px solid #ccc;
+      font-size: 15px;
+      margin-bottom: 10px;
+      box-sizing: border-box;
+      background: #fff;
+    }
 
-.popup-ir-overlay.show {
-  display: flex;
-}
+    button {
+      width: 100%;
+      padding: 14px;
+      border-radius: 12px;
+      border: none;
+      background: #2563eb;
+      color: white;
+      font-weight: bold;
+      font-size: 15px;
+      cursor: pointer;
+    }
 
-.popup-ir {
-  background: white;
-  border-radius: 20px;
-  padding: 20px;
-  max-width: 350px;
-  text-align: center;
-}
+    button:active {
+      transform: scale(0.99);
+    }
 
-.popup-ir h2 {
-  font-size: 18px;
-  color: #b45309;
-}
+    .resultado {
+      display: grid;
+      gap: 10px;
+    }
 
-.popup-ir p {
-  font-size: 14px;
-}
+    .item {
+      background: white;
+      border-radius: 16px;
+      padding: 14px;
+      border: 1px solid #ddd;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.04);
+    }
 
-.popup-ir a {
-  display: block;
-  margin-top: 10px;
-  text-decoration: none;
-  font-weight: bold;
-}
+    .item.destaque {
+      border: 2px solid #2563eb;
+      background: #f0f6ff;
+    }
 
-.whats-ir {
-  background: #16a34a;
-  color: white;
-  padding: 10px;
-  border-radius: 10px;
-}
+    .nome {
+      font-weight: bold;
+      font-size: 16px;
+      margin-bottom: 4px;
+    }
 
-.fechar-ir {
-  margin-top: 12px;
-  background: #ddd;
-}
+    .cargo {
+      font-size: 13px;
+      color: #666;
+      margin-bottom: 8px;
+    }
 
-/* =========================
-   RESULTADOS
-========================= */
+    .info {
+      font-size: 14px;
+      margin-bottom: 4px;
+    }
 
-.card {
-  background: white;
-  border-radius: 14px;
-  padding: 14px;
-  margin-top: 10px;
-}
+    .msg {
+      text-align: center;
+      color: #666;
+      margin-top: 10px;
+      font-size: 14px;
+    }
 
-</style>
+    .erro {
+      color: #b91c1c;
+      font-weight: bold;
+    }
+
+    .modal-bg {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      padding: 16px;
+      box-sizing: border-box;
+    }
+
+    .modal {
+      background: white;
+      padding: 20px;
+      border-radius: 16px;
+      text-align: center;
+      max-width: 320px;
+      width: 100%;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+
+    .pix {
+      font-size: 20px;
+      font-weight: bold;
+      color: green;
+      margin: 12px 0;
+      word-break: break-word;
+    }
+
+    .btn-secundario {
+      margin-top: 8px;
+      background: #16a34a;
+    }
+  </style>
 </head>
 
 <body>
 
-<div class="container">
-
-  <div class="topo">
-    <h1>Classificação PSS 02 2025</h1>
+  <!-- POPUP PIX -->
+  <div class="modal-bg" id="modal">
+    <div class="modal">
+      <h3>Apoie este projeto</h3>
+      <p>Se te ajudou, envie um PIX:</p>
+      <div class="pix" id="chavePix">31 99617-4800</div>
+      <button class="btn-secundario" onclick="copiarPix()">Copiar chave PIX</button>
+      <button style="margin-top:8px;" onclick="fechar()">Entrar</button>
+    </div>
   </div>
 
-  <!-- AVISO IR -->
-  <div class="aviso-ir">
-    <strong>⚠️ Prazo do Imposto de Renda MENOR esse ano!</strong>
-    Não deixe pra última hora — evite multas.<br>
-    Chama no WhatsApp:
-    <a href="https://wa.me/5531983486936" target="_blank">
-      31 98348-6936
-    </a><br>
-    📲 @santosesoares.contabilidade
+  <div class="container">
+
+    <div class="topo">
+      <h1>PSS 02 2025</h1>
+      <p>Nível Superior</p>
+      <p id="tituloCargos"></p>
+    </div>
+
+    <!-- LINK PARA AGENTE DE EDUCAÇÃO INFANTIL -->
+    <div class="link-card">
+      <h3>Agente de Educação Infantil</h3>
+      <p>Para consultar a classificação de Agente de Educação Infantil, acesse a página específica abaixo.</p>
+      <a class="link-pagina" href="agente-educacao-infantil.html">Clique aqui para acessar</a>
+    </div>
+
+    <div class="card">
+      <input type="text" id="nome" placeholder="Coloque seu nome aqui" />
+
+      <select id="cargo">
+        <option value="">Todos os cargos</option>
+      </select>
+
+      <button onclick="buscar()">Pesquisar</button>
+
+      <div id="msg" class="msg"></div>
+    </div>
+
+    <div id="resultado" class="resultado"></div>
   </div>
 
-  <input type="text" id="nome" placeholder="Coloque seu nome aqui">
+  <script>
+    const arquivo = "resultado_extraido_atualizado.xlsx";
+    let dados = [];
 
-  <select id="cargo">
-    <option value="">Todos os cargos</option>
-  </select>
+    function fechar() {
+      document.getElementById("modal").style.display = "none";
+    }
 
-  <button onclick="buscar()">Pesquisar</button>
+    function abrir() {
+      document.getElementById("modal").style.display = "flex";
+    }
 
-  <div id="resultado"></div>
+    function copiarPix() {
+      const chave = document.getElementById("chavePix").innerText;
+      navigator.clipboard.writeText(chave).then(() => {
+        alert("Chave PIX copiada: " + chave);
+      }).catch(() => {
+        alert("Não foi possível copiar automaticamente. Chave PIX: " + chave);
+      });
+    }
 
-</div>
+    function normalizar(texto) {
+      return String(texto || "")
+        .trim()
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "");
+    }
 
-<!-- POPUP IR -->
-<div id="popupIR" class="popup-ir-overlay">
-  <div class="popup-ir">
-    <h2>⚠️ Prazo do Imposto de Renda MENOR esse ano!</h2>
+    function limparTexto(texto) {
+      return String(texto || "").trim();
+    }
 
-    <p>Não deixe pra última hora — evite multas e problemas com a Receita.</p>
-    <p><strong>Faço seu IR rápido, seguro e sem complicação!</strong></p>
+    function encontrarColuna(obj, possiveisNomes) {
+      const chaves = Object.keys(obj || {});
+      for (const nome of possiveisNomes) {
+        const nomeNormalizado = normalizar(nome);
+        const chaveEncontrada = chaves.find(c => normalizar(c) === nomeNormalizado);
+        if (chaveEncontrada) return chaveEncontrada;
+      }
+      return null;
+    }
 
-    <a class="whats-ir" href="https://wa.me/5531983486936" target="_blank">
-      Chamar no WhatsApp
-    </a>
+    function transformarLinha(linhaOriginal) {
+      const colNome = encontrarColuna(linhaOriginal, ["Nome"]);
+      const colCargo = encontrarColuna(linhaOriginal, ["Cargo"]);
+      const colClassificacao = encontrarColuna(linhaOriginal, [
+        "Classificação",
+        "Classificacao",
+        "Classificação Geral",
+        "Classificacao Geral"
+      ]);
+      const colCotaNegro = encontrarColuna(linhaOriginal, [
+        "Classificação Cota Negro",
+        "Classificacao Cota Negro",
+        "RESERVA DE VAGAS AUTODECLARADOS PRETOS OU PARDOS"
+      ]);
+      const colPcd = encontrarColuna(linhaOriginal, [
+        "RESERVA DE VAGAS PESSOA COM DEFICIÊNCIA",
+        "RESERVA DE VAGAS PESSOA COM DEFICIENCIA",
+        "PcD",
+        "PCD"
+      ]);
 
-    <a href="https://instagram.com/santosesoares.contabilidade" target="_blank">
-      📲 @santosesoares.contabilidade
-    </a>
+      return {
+        Nome: limparTexto(colNome ? linhaOriginal[colNome] : ""),
+        Cargo: limparTexto(colCargo ? linhaOriginal[colCargo] : ""),
+        Classificacao: limparTexto(colClassificacao ? linhaOriginal[colClassificacao] : ""),
+        CotaNegro: limparTexto(colCotaNegro ? linhaOriginal[colCotaNegro] : ""),
+        PCD: limparTexto(colPcd ? linhaOriginal[colPcd] : "")
+      };
+    }
 
-    <button class="fechar-ir" onclick="fecharPopupIR()">Fechar</button>
-  </div>
-</div>
+    function preencherCargos() {
+      const select = document.getElementById("cargo");
+      select.innerHTML = '<option value="">Todos os cargos</option>';
 
-<script>
+      const cargos = [...new Set(
+        dados
+          .map(d => limparTexto(d.Cargo))
+          .filter(c => c !== "")
+      )].sort((a, b) => a.localeCompare(b, "pt-BR"));
 
-let dados = [];
+      cargos.forEach(cargo => {
+        const opt = document.createElement("option");
+        opt.value = cargo;
+        opt.textContent = cargo;
+        select.appendChild(opt);
+      });
+    }
 
-fetch("classificacao_pss_medio_refinado.xlsx")
-  .then(res => res.arrayBuffer())
-  .then(buffer => {
-    const workbook = XLSX.read(buffer, { type: "array" });
-    const sheet = workbook.Sheets[workbook.SheetNames[0]];
-    dados = XLSX.utils.sheet_to_json(sheet);
+    function mostrarCargosNoTitulo() {
+      const cargos = [...new Set(
+        dados
+          .map(d => limparTexto(d.Cargo))
+          .filter(c => c !== "")
+      )].sort((a, b) => a.localeCompare(b, "pt-BR"));
 
-    carregarCargos();
-  });
+      let texto = cargos.join(" • ");
+      if (texto.length > 180) {
+        texto = texto.substring(0, 180) + "...";
+      }
 
-function carregarCargos() {
-  const cargos = [...new Set(dados.map(d => d.Cargo))];
+      document.getElementById("tituloCargos").innerText = texto || "Cargos não encontrados no arquivo.";
+    }
 
-  const select = document.getElementById("cargo");
+    function buscar() {
+      abrir();
 
-  cargos.forEach(c => {
-    let opt = document.createElement("option");
-    opt.value = c;
-    opt.textContent = c;
-    select.appendChild(opt);
-  });
-}
+      const nomeDigitado = normalizar(document.getElementById("nome").value);
+      const cargoSelecionado = limparTexto(document.getElementById("cargo").value);
 
-function buscar() {
-  abrirPopupIR();
+      const div = document.getElementById("resultado");
+      const msg = document.getElementById("msg");
 
-  const nome = document.getElementById("nome").value.toLowerCase();
-  const cargo = document.getElementById("cargo").value;
+      div.innerHTML = "";
+      msg.innerHTML = "";
 
-  const resultado = dados.filter(d =>
-    (!nome || d.Nome.toLowerCase().includes(nome)) &&
-    (!cargo || d.Cargo === cargo)
-  );
+      let resultado = [...dados];
 
-  const div = document.getElementById("resultado");
-  div.innerHTML = "";
+      if (nomeDigitado) {
+        resultado = resultado.filter(p => normalizar(p.Nome).includes(nomeDigitado));
+      }
 
-  resultado.forEach(r => {
-    div.innerHTML += `
-      <div class="card">
-        <strong>${r.Nome}</strong><br>
-        Cargo: ${r.Cargo}<br>
-        Classificação: ${r.Classificacao}
-      </div>
-    `;
-  });
-}
+      if (cargoSelecionado) {
+        resultado = resultado.filter(p => limparTexto(p.Cargo) === cargoSelecionado);
+      }
 
-/* POPUP IR */
+      if (resultado.length === 0) {
+        msg.innerHTML = "Nenhum resultado encontrado.";
+        return;
+      }
 
-function abrirPopupIR() {
-  document.getElementById("popupIR").classList.add("show");
-}
+      resultado.forEach(p => {
+        div.innerHTML += `
+          <div class="item destaque">
+            <div class="nome">${p.Nome || "-"}</div>
+            <div class="cargo">${p.Cargo || ""}</div>
+            <div class="info"><strong>Classificação:</strong> ${p.Classificacao || "-"}</div>
+            <div class="info"><strong>Cota Negro:</strong> ${p.CotaNegro || "-"}</div>
+            <div class="info"><strong>PCD:</strong> ${p.PCD || "-"}</div>
+          </div>
+        `;
+      });
 
-function fecharPopupIR() {
-  document.getElementById("popupIR").classList.remove("show");
-}
+      msg.innerHTML = `${resultado.length} resultado(s) encontrado(s).`;
+    }
 
-window.onload = () => {
-  setTimeout(() => {
-    abrirPopupIR();
-  }, 1500);
-};
+    async function carregarExcel() {
+      const msg = document.getElementById("msg");
 
-</script>
+      try {
+        const resposta = await fetch(arquivo);
+
+        if (!resposta.ok) {
+          throw new Error("Arquivo não encontrado: " + arquivo);
+        }
+
+        const data = await resposta.arrayBuffer();
+        const wb = XLSX.read(data, { type: "array" });
+
+        if (!wb.SheetNames || wb.SheetNames.length === 0) {
+          throw new Error("O Excel não possui abas.");
+        }
+
+        const ws = wb.Sheets[wb.SheetNames[0]];
+        const bruto = XLSX.utils.sheet_to_json(ws, { defval: "" });
+
+        dados = bruto
+          .map(transformarLinha)
+          .filter(item => item.Nome !== "");
+
+        if (dados.length === 0) {
+          throw new Error("Nenhum dado válido foi encontrado na primeira aba.");
+        }
+
+        preencherCargos();
+        mostrarCargosNoTitulo();
+        msg.innerHTML = "Arquivo carregado com sucesso.";
+      } catch (erro) {
+        console.error(erro);
+        msg.innerHTML = `<span class="erro">Erro ao carregar o Excel: ${erro.message}</span>`;
+      }
+    }
+
+    carregarExcel();
+  </script>
 
 </body>
 </html>
