@@ -1,98 +1,120 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Consulta de Classificação</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Classificação PSS 02 2025</title>
+
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+
   <style>
     body {
       font-family: Arial, sans-serif;
-      max-width: 1100px;
-      margin: 30px auto;
-      padding: 0 16px;
+      margin: 0;
       background: #f5f7fb;
-      color: #222;
     }
-    h1 { margin-bottom: 8px; }
+
+    header {
+      background: #1e3a8a;
+      color: white;
+      padding: 20px;
+      text-align: center;
+      font-size: 22px;
+      font-weight: bold;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 20px auto;
+      padding: 0 15px;
+    }
+
     .box {
       background: white;
-      border: 1px solid #ddd;
-      border-radius: 12px;
-      padding: 16px;
-      margin-bottom: 16px;
+      padding: 15px;
+      border-radius: 10px;
+      margin-bottom: 15px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
     }
+
     .grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 12px;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 10px;
     }
+
     input, select, button {
-      width: 100%;
       padding: 10px;
       border-radius: 8px;
       border: 1px solid #ccc;
       font-size: 14px;
+      width: 100%;
     }
+
     button {
       background: #2563eb;
       color: white;
       border: none;
       cursor: pointer;
     }
-    button:hover { opacity: 0.95; }
+
+    button:hover {
+      opacity: 0.9;
+    }
+
     table {
       width: 100%;
       border-collapse: collapse;
-      background: white;
     }
+
     th, td {
-      border: 1px solid #ddd;
       padding: 10px;
-      text-align: left;
-      font-size: 14px;
+      border-bottom: 1px solid #ddd;
     }
-    th { background: #f0f3f8; }
-    .muted { color: #666; }
+
+    th {
+      background: #eef2ff;
+    }
+
+    tr:hover {
+      background: #f1f5ff;
+    }
+
+    .status {
+      margin-top: 10px;
+      color: #555;
+    }
   </style>
 </head>
+
 <body>
-  <h1>Consulta de Classificação</h1>
-  <p class="muted">Pesquise por cargo, nome e faixa de classificação.</p>
+
+<header>
+  Classificação PSS 02 2025
+</header>
+
+<div class="container">
 
   <div class="box">
     <div class="grid">
-      <div>
-        <label>Cargo</label>
-        <select id="cargoFilter">
-          <option value="">Todos</option>
-        </select>
-      </div>
-      <div>
-        <label>Nome</label>
-        <input type="text" id="nomeFilter" placeholder="Digite parte do nome">
-      </div>
-      <div>
-        <label>Classificação mínima</label>
-        <input type="number" id="classMin" placeholder="Ex.: 1">
-      </div>
-      <div>
-        <label>Classificação máxima</label>
-        <input type="number" id="classMax" placeholder="Ex.: 100">
-      </div>
+      <input type="text" id="nome" placeholder="Buscar por nome">
+
+      <select id="cargo">
+        <option value="">Todos os cargos</option>
+      </select>
+
+      <input type="number" id="min" placeholder="Classificação mínima">
+      <input type="number" id="max" placeholder="Classificação máxima">
     </div>
 
-    <div style="margin-top: 12px; display: flex; gap: 10px; flex-wrap: wrap;">
-      <button onclick="aplicarFiltros()">Pesquisar</button>
-      <button onclick="limparFiltros()" style="background:#111827;">Limpar</button>
-    </div>
+    <br>
 
-    <p style="margin-top:12px;">
-      <strong>Total carregado:</strong> <span id="totalCount">0</span> |
-      <strong>Total filtrado:</strong> <span id="filteredCount">0</span>
+    <button onclick="filtrar()">Pesquisar</button>
+
+    <p class="status">
+      Total: <span id="total">0</span> |
+      Filtrado: <span id="filtrado">0</span>
     </p>
-
-    <p id="status">Carregando Excel...</p>
   </div>
 
   <div class="box">
@@ -104,126 +126,90 @@
           <th>Classificação</th>
         </tr>
       </thead>
-      <tbody id="tableBody">
-        <tr><td colspan="3">Nenhum dado carregado.</td></tr>
+      <tbody id="tabela">
+        <tr><td colspan="3">Carregando...</td></tr>
       </tbody>
     </table>
   </div>
 
-  <script>
-    const EXCEL_FILE = "resultado_extraido.xlsx";
-    let allRows = [];
-    let filteredRows = [];
+</div>
 
-    async function carregarExcel() {
-      try {
-        const response = await fetch(EXCEL_FILE);
-        if (!response.ok) {
-          throw new Error("Não foi possível abrir o arquivo " + EXCEL_FILE);
-        }
+<script>
+const arquivo = "resultado_extraido.xlsx";
 
-        const arrayBuffer = await response.arrayBuffer();
-        const workbook = XLSX.read(arrayBuffer, { type: "array" });
-        const firstSheet = workbook.SheetNames[0];
-        const worksheet = workbook.Sheets[firstSheet];
-        const data = XLSX.utils.sheet_to_json(worksheet, { defval: "" });
+let dados = [];
+let dadosFiltrados = [];
 
-        allRows = data
-          .map(row => ({
-            Cargo: String(row["Cargo"] || "").trim(),
-            Nome: String(row["Nome"] || "").trim(),
-            Classificação: Number(row["Classificação"])
-          }))
-          .filter(row =>
-            row.Cargo &&
-            row.Nome &&
-            !Number.isNaN(row.Classificação)
-          );
+async function carregar() {
+  const res = await fetch(arquivo);
+  const buffer = await res.arrayBuffer();
 
-        preencherFiltroCargo();
-        filteredRows = [...allRows];
-        renderTabela(filteredRows);
+  const workbook = XLSX.read(buffer, {type: "array"});
+  const sheet = workbook.Sheets[workbook.SheetNames[0]];
+  const json = XLSX.utils.sheet_to_json(sheet);
 
-        document.getElementById("totalCount").textContent = allRows.length;
-        document.getElementById("filteredCount").textContent = filteredRows.length;
-        document.getElementById("status").textContent = "Excel carregado com sucesso.";
-      } catch (e) {
-        document.getElementById("status").textContent = "Erro: " + e.message;
-      }
-    }
+  dados = json.map(x => ({
+    Cargo: x["Cargo"],
+    Nome: x["Nome"],
+    Classificação: Number(x["Classificação"])
+  })).filter(x => x.Cargo && x.Nome);
 
-    function preencherFiltroCargo() {
-      const select = document.getElementById("cargoFilter");
-      const cargos = [...new Set(allRows.map(r => r.Cargo))].sort((a, b) => a.localeCompare(b, "pt-BR"));
+  preencherCargos();
+  dadosFiltrados = [...dados];
 
-      cargos.forEach(cargo => {
-        const option = document.createElement("option");
-        option.value = cargo;
-        option.textContent = cargo;
-        select.appendChild(option);
-      });
-    }
+  atualizarTabela();
+}
 
-    function aplicarFiltros() {
-      const cargo = document.getElementById("cargoFilter").value.trim();
-      const nome = document.getElementById("nomeFilter").value.trim().toLowerCase();
-      const classMin = document.getElementById("classMin").value;
-      const classMax = document.getElementById("classMax").value;
+function preencherCargos() {
+  const cargos = [...new Set(dados.map(x => x.Cargo))].sort();
+  const select = document.getElementById("cargo");
 
-      filteredRows = allRows.filter(row => {
-        const okCargo = !cargo || row.Cargo === cargo;
-        const okNome = !nome || row.Nome.toLowerCase().includes(nome);
-        const okMin = !classMin || row.Classificação >= Number(classMin);
-        const okMax = !classMax || row.Classificação <= Number(classMax);
-        return okCargo && okNome && okMin && okMax;
-      });
+  cargos.forEach(c => {
+    const opt = document.createElement("option");
+    opt.value = c;
+    opt.textContent = c;
+    select.appendChild(opt);
+  });
+}
 
-      filteredRows.sort((a, b) => a.Classificação - b.Classificação || a.Nome.localeCompare(b.Nome, "pt-BR"));
+function filtrar() {
+  const nome = document.getElementById("nome").value.toLowerCase();
+  const cargo = document.getElementById("cargo").value;
+  const min = document.getElementById("min").value;
+  const max = document.getElementById("max").value;
 
-      renderTabela(filteredRows);
-      document.getElementById("filteredCount").textContent = filteredRows.length;
-    }
+  dadosFiltrados = dados.filter(x => {
+    return (!nome || x.Nome.toLowerCase().includes(nome)) &&
+           (!cargo || x.Cargo === cargo) &&
+           (!min || x.Classificação >= min) &&
+           (!max || x.Classificação <= max);
+  });
 
-    function limparFiltros() {
-      document.getElementById("cargoFilter").value = "";
-      document.getElementById("nomeFilter").value = "";
-      document.getElementById("classMin").value = "";
-      document.getElementById("classMax").value = "";
+  atualizarTabela();
+}
 
-      filteredRows = [...allRows];
-      filteredRows.sort((a, b) => a.Classificação - b.Classificação || a.Nome.localeCompare(b.Nome, "pt-BR"));
+function atualizarTabela() {
+  const tbody = document.getElementById("tabela");
 
-      renderTabela(filteredRows);
-      document.getElementById("filteredCount").textContent = filteredRows.length;
-    }
+  if (dadosFiltrados.length === 0) {
+    tbody.innerHTML = "<tr><td colspan='3'>Nenhum resultado</td></tr>";
+    return;
+  }
 
-    function renderTabela(rows) {
-      const tbody = document.getElementById("tableBody");
+  tbody.innerHTML = dadosFiltrados.map(x => `
+    <tr>
+      <td>${x.Cargo}</td>
+      <td>${x.Nome}</td>
+      <td>${x.Classificação}</td>
+    </tr>
+  `).join("");
 
-      if (!rows.length) {
-        tbody.innerHTML = `<tr><td colspan="3">Nenhum resultado encontrado.</td></tr>`;
-        return;
-      }
+  document.getElementById("total").textContent = dados.length;
+  document.getElementById("filtrado").textContent = dadosFiltrados.length;
+}
 
-      tbody.innerHTML = rows.map(row => `
-        <tr>
-          <td>${escapeHtml(row.Cargo)}</td>
-          <td>${escapeHtml(row.Nome)}</td>
-          <td>${row.Classificação}</td>
-        </tr>
-      `).join("");
-    }
+carregar();
+</script>
 
-    function escapeHtml(text) {
-      return String(text)
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
-    }
-
-    carregarExcel();
-  </script>
 </body>
 </html>
