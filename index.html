@@ -1,4 +1,4 @@
-  <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
@@ -11,19 +11,23 @@
     body {
       margin: 0;
       font-family: Arial, sans-serif;
-      background: #f5f7fb;
+      background: #eef2f7;
       color: #111;
     }
 
     .container {
-      max-width: 600px;
+      max-width: 700px;
       margin: auto;
       padding: 16px;
     }
 
     .topo {
+      background: linear-gradient(135deg, #2563eb, #3b82f6);
+      color: white;
+      padding: 20px;
+      border-radius: 18px;
       text-align: center;
-      margin-bottom: 20px;
+      margin-bottom: 16px;
     }
 
     .topo h1 {
@@ -32,43 +36,56 @@
     }
 
     .topo p {
-      margin: 5px 0 0;
-      color: #555;
+      margin: 6px 0 0;
       font-size: 14px;
+      opacity: 0.9;
     }
 
-    input {
+    .card {
+      background: white;
+      padding: 14px;
+      border-radius: 16px;
+      margin-bottom: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+    }
+
+    input, select {
       width: 100%;
       padding: 14px;
       border-radius: 12px;
       border: 1px solid #ccc;
-      font-size: 16px;
+      font-size: 15px;
       margin-bottom: 10px;
     }
 
     button {
       width: 100%;
       padding: 14px;
-      border: none;
       border-radius: 12px;
+      border: none;
       background: #2563eb;
       color: white;
-      font-size: 16px;
+      font-size: 15px;
       font-weight: bold;
       cursor: pointer;
     }
 
     .resultado {
-      margin-top: 20px;
       display: grid;
       gap: 10px;
+      margin-top: 10px;
     }
 
-    .card {
+    .item {
       background: white;
+      border-radius: 16px;
       padding: 14px;
-      border-radius: 14px;
-      border: 1px solid #ddd;
+      border: 1px solid #e5e7eb;
+    }
+
+    .item.destaque {
+      border: 2px solid #2563eb;
+      background: #f0f6ff;
     }
 
     .nome {
@@ -84,18 +101,14 @@
 
     .info {
       font-size: 14px;
-      margin-top: 4px;
-    }
-
-    .destaque {
-      border: 2px solid #2563eb;
-      background: #f0f6ff;
+      margin-top: 3px;
     }
 
     .msg {
       text-align: center;
-      margin-top: 20px;
+      margin-top: 10px;
       color: #666;
+      font-size: 14px;
     }
 
     .modal-bg {
@@ -142,13 +155,19 @@
     <p>Nível Superior</p>
   </div>
 
-  <input type="text" id="nome" placeholder="Digite seu nome">
+  <div class="card">
+    <input type="text" id="nome" placeholder="Coloque seu nome aqui">
+    
+    <select id="cargo">
+      <option value="">Todos os cargos</option>
+    </select>
 
-  <button onclick="buscar()">Buscar</button>
+    <button onclick="buscar()">Buscar</button>
+
+    <div id="msg" class="msg"></div>
+  </div>
 
   <div id="resultado" class="resultado"></div>
-
-  <div id="msg" class="msg"></div>
 
 </div>
 
@@ -180,31 +199,50 @@ function getCota(item){
          "";
 }
 
+function preencherCargos(){
+  const select = document.getElementById("cargo");
+  const cargos = [...new Set(dados.map(d => d.Cargo).filter(Boolean))];
+
+  cargos.sort().forEach(c => {
+    const opt = document.createElement("option");
+    opt.value = c;
+    opt.textContent = c;
+    select.appendChild(opt);
+  });
+}
+
 function buscar(){
   const nome = normalizar(document.getElementById("nome").value);
+  const cargo = document.getElementById("cargo").value;
+
   const div = document.getElementById("resultado");
   const msg = document.getElementById("msg");
 
   div.innerHTML = "";
   msg.innerHTML = "";
 
-  if(!nome){
-    msg.innerHTML = "Digite um nome.";
-    return;
+  let resultado = dados;
+
+  if(nome){
+    resultado = resultado.filter(p =>
+      normalizar(p.Nome).includes(nome)
+    );
   }
 
-  const resultado = dados.filter(p =>
-    normalizar(p.Nome).includes(nome)
-  );
+  if(cargo){
+    resultado = resultado.filter(p =>
+      p.Cargo === cargo
+    );
+  }
 
   if(resultado.length === 0){
-    msg.innerHTML = "Nome não encontrado.";
+    msg.innerHTML = "Nenhum resultado encontrado.";
     return;
   }
 
-  resultado.forEach((p, i) => {
+  resultado.forEach(p => {
     div.innerHTML += `
-      <div class="card destaque">
+      <div class="item destaque">
         <div class="nome">${p.Nome}</div>
         <div class="cargo">${p.Cargo || ""}</div>
         <div class="info">Classificação: ${getClassificacao(p)}</div>
@@ -220,6 +258,7 @@ fetch(arquivo)
     const wb = XLSX.read(data, {type: "array"});
     const ws = wb.Sheets[wb.SheetNames[0]];
     dados = XLSX.utils.sheet_to_json(ws, {defval: ""});
+    preencherCargos();
   });
 </script>
 
