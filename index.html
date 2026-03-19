@@ -86,6 +86,25 @@
       line-height: 1.6;
     }
 
+    .contador-visitas {
+      margin-top: 14px;
+      position: relative;
+      z-index: 1;
+      display: inline-block;
+      background: rgba(255, 255, 255, 0.16);
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      color: #ffffff;
+      padding: 10px 16px;
+      border-radius: 999px;
+      font-size: 14px;
+      font-weight: bold;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+    }
+
+    .contador-visitas span {
+      font-size: 16px;
+    }
+
     .card,
     .link-card {
       background: rgba(255,255,255,0.92);
@@ -388,6 +407,9 @@
       <h1>PSS 02 2025</h1>
       <p>Nível Superior</p>
       <p id="tituloCargos"></p>
+      <div class="contador-visitas">
+        👁️ Visitas: <span id="contadorVisitas">Carregando...</span>
+      </div>
     </div>
 
     <!-- AVISO IR -->
@@ -424,6 +446,27 @@
   <script>
     const arquivo = "resultado_extraido_atualizado.xlsx";
     let dados = [];
+
+    async function atualizarContadorVisitas() {
+      const contador = document.getElementById("contadorVisitas");
+
+      try {
+        const namespace = "pss-02-2025";
+        const key = "visitas-site";
+
+        const resposta = await fetch(`https://api.countapi.xyz/hit/${namespace}/${key}`);
+
+        if (!resposta.ok) {
+          throw new Error("Não foi possível atualizar o contador.");
+        }
+
+        const data = await resposta.json();
+        contador.textContent = data.value;
+      } catch (erro) {
+        console.error("Erro no contador de visitas:", erro);
+        contador.textContent = "indisponível";
+      }
+    }
 
     function fechar() {
       document.getElementById("modal").style.display = "none";
@@ -657,6 +700,7 @@
       }
     }
 
+    atualizarContadorVisitas();
     carregarExcel();
   </script>
 
