@@ -1,486 +1,112 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Classificação PSS 02 2025</title>
-  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
 
   <style>
-    :root {
-      --bg: #f4f8fb;
-      --card: #ffffff;
-      --primary: #0f766e;
-      --primary-dark: #115e59;
-      --secondary: #0f172a;
-      --line: #dbe4ea;
-      --text: #1f2937;
-      --muted: #6b7280;
-      --accent: #14b8a6;
-      --shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
-    }
-
-    * {
-      box-sizing: border-box;
-    }
-
     body {
-      margin: 0;
-      font-family: Arial, Helvetica, sans-serif;
-      background: linear-gradient(180deg, #e6fffb 0%, var(--bg) 180px);
-      color: var(--text);
+      font-family: Arial;
+      padding: 10px;
+      background: #f5f5f5;
     }
 
-    .app {
-      max-width: 700px;
-      margin: 0 auto;
-      padding: 14px 12px 28px;
-    }
-
-    .hero {
-      background: linear-gradient(135deg, var(--primary), var(--accent));
-      color: white;
-      border-radius: 20px;
-      padding: 22px 16px;
-      box-shadow: var(--shadow);
-      margin-bottom: 14px;
+    h1 {
       text-align: center;
+      font-size: 20px;
     }
 
-    .hero h1 {
-      margin: 0;
-      font-size: 24px;
-      line-height: 1.2;
-    }
-
-    .hero h2 {
-      margin: 8px 0 0;
-      font-size: 15px;
-      font-weight: normal;
-      opacity: 0.95;
-    }
-
-    .credit {
-      margin-top: 12px;
-      font-size: 13px;
-      opacity: 0.95;
-    }
-
-    .card {
-      background: var(--card);
-      border-radius: 18px;
-      padding: 14px;
-      box-shadow: var(--shadow);
-      margin-bottom: 14px;
-      border: 1px solid #eef2f5;
-    }
-
-    .pix-box {
-      background: #f0fdfa;
-      border: 1px solid #ccfbf1;
-      border-radius: 14px;
-      padding: 14px;
-      text-align: center;
-    }
-
-    .pix-title {
-      font-size: 15px;
-      font-weight: bold;
-      color: var(--primary-dark);
-      margin-bottom: 8px;
-    }
-
-    .pix-text {
-      font-size: 13px;
-      color: #334155;
-      line-height: 1.5;
-      margin-bottom: 10px;
-    }
-
-    .pix-number {
-      display: inline-block;
-      background: var(--primary);
-      color: white;
-      padding: 10px 14px;
-      border-radius: 999px;
-      font-size: 17px;
-      font-weight: bold;
-    }
-
-    .field {
-      margin-bottom: 12px;
-    }
-
-    .field label {
-      display: block;
-      font-size: 13px;
-      color: var(--muted);
-      margin-bottom: 6px;
-    }
-
-    input, select, button {
+    input {
       width: 100%;
-      border-radius: 12px;
-      border: 1px solid var(--line);
-      padding: 12px 14px;
-      font-size: 15px;
-    }
-
-    input, select {
-      background: #fff;
-      color: var(--text);
-    }
-
-    button {
-      background: var(--primary);
-      color: white;
-      border: none;
-      font-weight: bold;
-      cursor: pointer;
-    }
-
-    button.secondary {
-      background: var(--secondary);
-    }
-
-    .btns {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      margin-top: 6px;
-    }
-
-    .stats {
-      margin-top: 12px;
-      font-size: 13px;
-      color: var(--muted);
-      line-height: 1.7;
-    }
-
-    .table-wrap {
-      overflow-x: auto;
-      border-radius: 14px;
-      border: 1px solid #edf2f7;
+      padding: 10px;
+      margin-bottom: 10px;
+      font-size: 16px;
     }
 
     table {
       width: 100%;
       border-collapse: collapse;
-      min-width: 520px;
       background: white;
     }
 
     th, td {
-      padding: 11px 10px;
-      border-bottom: 1px solid #edf2f7;
+      padding: 8px;
+      border: 1px solid #ccc;
+      font-size: 12px;
       text-align: left;
-      font-size: 14px;
     }
 
     th {
-      background: #f8fafc;
-      color: #0f172a;
-      position: sticky;
-      top: 0;
-      z-index: 1;
-    }
-
-    tr:hover td {
-      background: #f8fffe;
-    }
-
-    .status {
-      margin-top: 10px;
-      font-size: 13px;
-      color: var(--muted);
-    }
-
-    .empty {
-      text-align: center;
-      color: var(--muted);
-      padding: 18px;
-    }
-
-    /* POPUP */
-    .overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(15, 23, 42, 0.78);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 16px;
-      z-index: 9999;
-    }
-
-    .modal {
-      width: 100%;
-      max-width: 420px;
-      background: white;
-      border-radius: 22px;
-      padding: 20px 16px;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.25);
-      text-align: center;
-    }
-
-    .modal h3 {
-      margin: 0 0 10px;
-      color: var(--primary-dark);
-      font-size: 21px;
-    }
-
-    .modal p {
-      margin: 0 0 12px;
-      color: #334155;
-      line-height: 1.6;
-      font-size: 14px;
-    }
-
-    .modal .pix-highlight {
-      display: inline-block;
-      margin: 8px 0 14px;
-      background: #0f766e;
+      background: #007bff;
       color: white;
-      padding: 10px 14px;
-      border-radius: 999px;
-      font-weight: bold;
-      font-size: 17px;
-    }
-
-    .modal button {
-      margin-top: 6px;
-    }
-
-    .hidden {
-      display: none !important;
-    }
-
-    @media (max-width: 480px) {
-      .hero h1 {
-        font-size: 21px;
-      }
-
-      .hero h2 {
-        font-size: 14px;
-      }
-
-      .btns {
-        grid-template-columns: 1fr;
-      }
-
-      th, td {
-        font-size: 13px;
-      }
     }
   </style>
 </head>
+
 <body>
-  <!-- POPUP OBRIGATÓRIO -->
-  <div id="popupOverlay" class="overlay">
-    <div class="modal">
-      <h3>Bem-vindo(a)</h3>
-      <p>
-        Esta consulta foi elaborada para facilitar o acesso à classificação do
-        PSS 02 2025.
-      </p>
-      <p>
-        Se este trabalho te ajudar, você pode colaborar com qualquer valor via Pix:
-      </p>
-      <div class="pix-highlight">31 99617-4800</div>
-      <p>
-        Elaborado por <strong>Data Ápice</strong>.
-      </p>
-      <button onclick="fecharPopup()">Fechar e abrir consulta</button>
-    </div>
-  </div>
 
-  <div class="app hidden" id="mainApp">
-    <section class="hero">
-      <h1>Classificação PSS 02 2025</h1>
-      <h2>Classificação Geral Nível Superior</h2>
-      <div class="credit">Elaborado por Data Ápice</div>
-    </section>
+<h1>Classificação PSS 02 2025</h1>
 
-    <section class="card">
-      <div class="pix-box">
-        <div class="pix-title">Ajude a manter este trabalho</div>
-        <div class="pix-text">
-          Se esta página te ajudou, você pode contribuir via Pix para apoiar novos levantamentos e consultas.
-        </div>
-        <div class="pix-number">Pix: 31 99617-4800</div>
-      </div>
-    </section>
+<input type="text" id="filtro" placeholder="Digite o nome...">
 
-    <section class="card">
-      <div class="field">
-        <label for="nomeFilter">Buscar por nome</label>
-        <input type="text" id="nomeFilter" placeholder="Digite parte do nome" />
-      </div>
+<table id="tabela">
+  <thead>
+    <tr>
+      <th>Cargo</th>
+      <th>Nome</th>
+      <th>Classificação Geral</th>
+      <th>Cota Negro</th>
+    </tr>
+  </thead>
+  <tbody></tbody>
+</table>
 
-      <div class="field">
-        <label for="cargoFilter">Cargo</label>
-        <select id="cargoFilter">
-          <option value="">Todos os cargos</option>
-        </select>
-      </div>
+<script>
+const url = "resultado_extraido_atualizado.xlsx"; // arquivo no GitHub
 
-      <div class="btns">
-        <button onclick="filtrar()">Pesquisar</button>
-        <button class="secondary" onclick="limparFiltros()">Limpar filtros</button>
-      </div>
+fetch(url)
+  .then(res => res.arrayBuffer())
+  .then(data => {
+    const workbook = XLSX.read(data, { type: "array" });
+    const sheet = workbook.Sheets[workbook.SheetNames[0]];
+    const json = XLSX.utils.sheet_to_json(sheet);
 
-      <div class="stats">
-        <div><strong>Total carregado:</strong> <span id="total">0</span></div>
-        <div><strong>Total filtrado:</strong> <span id="filtrado">0</span></div>
-      </div>
+    window.dados = json;
+    renderizar(json);
+  });
 
-      <div class="status" id="status">Carregando arquivo...</div>
-    </section>
+function renderizar(dados) {
+  const tbody = document.querySelector("#tabela tbody");
+  tbody.innerHTML = "";
 
-    <section class="card">
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>Cargo</th>
-              <th>Nome</th>
-              <th>Classificação</th>
-            </tr>
-          </thead>
-          <tbody id="tabela">
-            <tr><td colspan="3" class="empty">Carregando...</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
-  </div>
+  dados.forEach(item => {
+    const tr = document.createElement("tr");
 
-  <script>
-    const arquivo = "resultado_extraido.xlsx";
-    let dados = [];
-    let dadosFiltrados = [];
+    tr.innerHTML = `
+      <td>${item.Cargo || ""}</td>
+      <td>${item.Nome || ""}</td>
+      <td>${item.Classificacao || item["Classificação"] || ""}</td>
+      <td>${item.Classificacao_Cota_Negro || ""}</td>
+    `;
 
-    function fecharPopup() {
-      document.getElementById("popupOverlay").classList.add("hidden");
-      document.getElementById("mainApp").classList.remove("hidden");
-    }
+    tbody.appendChild(tr);
+  });
+}
 
-    async function carregar() {
-      const status = document.getElementById("status");
+// filtro por nome
+document.getElementById("filtro").addEventListener("input", function() {
+  const texto = this.value.toLowerCase();
 
-      try {
-        const res = await fetch(arquivo);
+  const filtrado = window.dados.filter(item =>
+    (item.Nome || "").toLowerCase().includes(texto)
+  );
 
-        if (!res.ok) {
-          throw new Error("Não foi possível localizar o arquivo " + arquivo);
-        }
+  renderizar(filtrado);
+});
+</script>
 
-        const buffer = await res.arrayBuffer();
-        const workbook = XLSX.read(buffer, { type: "array" });
-        const sheet = workbook.Sheets[workbook.SheetNames[0]];
-        const json = XLSX.utils.sheet_to_json(sheet, { defval: "" });
-
-        dados = json.map(x => ({
-          Cargo: String(x["Cargo"] || "").trim(),
-          Nome: String(x["Nome"] || "").trim(),
-          Classificação: Number(x["Classificação"])
-        })).filter(x =>
-          x.Cargo &&
-          x.Nome &&
-          !Number.isNaN(x.Classificação)
-        );
-
-        preencherCargos();
-        dadosFiltrados = [...dados];
-        ordenarDados(dadosFiltrados);
-        atualizarTabela();
-
-        document.getElementById("total").textContent = dados.length.toLocaleString("pt-BR");
-        document.getElementById("filtrado").textContent = dadosFiltrados.length.toLocaleString("pt-BR");
-        status.textContent = "Arquivo carregado com sucesso.";
-      } catch (erro) {
-        status.textContent = "Erro ao carregar o Excel: " + erro.message;
-        document.getElementById("tabela").innerHTML =
-          "<tr><td colspan='3' class='empty'>Não foi possível carregar os dados.</td></tr>";
-      }
-    }
-
-    function preencherCargos() {
-      const select = document.getElementById("cargoFilter");
-      const cargos = [...new Set(dados.map(x => x.Cargo))]
-        .sort((a, b) => a.localeCompare(b, "pt-BR"));
-
-      cargos.forEach(cargo => {
-        const opt = document.createElement("option");
-        opt.value = cargo;
-        opt.textContent = cargo;
-        select.appendChild(opt);
-      });
-    }
-
-    function ordenarDados(lista) {
-      lista.sort((a, b) =>
-        a.Classificação - b.Classificação ||
-        a.Nome.localeCompare(b.Nome, "pt-BR")
-      );
-    }
-
-    function filtrar() {
-      const nome = document.getElementById("nomeFilter").value.trim().toLowerCase();
-      const cargo = document.getElementById("cargoFilter").value;
-
-      dadosFiltrados = dados.filter(item => {
-        const okNome = !nome || item.Nome.toLowerCase().includes(nome);
-        const okCargo = !cargo || item.Cargo === cargo;
-        return okNome && okCargo;
-      });
-
-      ordenarDados(dadosFiltrados);
-      atualizarTabela();
-    }
-
-    function limparFiltros() {
-      document.getElementById("nomeFilter").value = "";
-      document.getElementById("cargoFilter").value = "";
-
-      dadosFiltrados = [...dados];
-      ordenarDados(dadosFiltrados);
-      atualizarTabela();
-    }
-
-    function atualizarTabela() {
-      const tbody = document.getElementById("tabela");
-
-      if (!dadosFiltrados.length) {
-        tbody.innerHTML = "<tr><td colspan='3' class='empty'>Nenhum resultado encontrado.</td></tr>";
-        document.getElementById("filtrado").textContent = "0";
-        return;
-      }
-
-      tbody.innerHTML = dadosFiltrados.map(item => `
-        <tr>
-          <td>${escapeHtml(item.Cargo)}</td>
-          <td>${escapeHtml(item.Nome)}</td>
-          <td>${item.Classificação}</td>
-        </tr>
-      `).join("");
-
-      document.getElementById("filtrado").textContent = dadosFiltrados.length.toLocaleString("pt-BR");
-    }
-
-    function escapeHtml(texto) {
-      return String(texto)
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
-    }
-
-    document.getElementById("nomeFilter").addEventListener("input", filtrar);
-    document.getElementById("cargoFilter").addEventListener("change", filtrar);
-
-    document.addEventListener("DOMContentLoaded", carregar);
-  </script>
 </body>
 </html>
