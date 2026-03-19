@@ -1,1 +1,229 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Consulta de Classificação</title>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 1100px;
+      margin: 30px auto;
+      padding: 0 16px;
+      background: #f5f7fb;
+      color: #222;
+    }
+    h1 { margin-bottom: 8px; }
+    .box {
+      background: white;
+      border: 1px solid #ddd;
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px;
+    }
+    input, select, button {
+      width: 100%;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+    }
+    button {
+      background: #2563eb;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover { opacity: 0.95; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 10px;
+      text-align: left;
+      font-size: 14px;
+    }
+    th { background: #f0f3f8; }
+    .muted { color: #666; }
+  </style>
+</head>
+<body>
+  <h1>Consulta de Classificação</h1>
+  <p class="muted">Pesquise por cargo, nome e faixa de classificação.</p>
 
+  <div class="box">
+    <div class="grid">
+      <div>
+        <label>Cargo</label>
+        <select id="cargoFilter">
+          <option value="">Todos</option>
+        </select>
+      </div>
+      <div>
+        <label>Nome</label>
+        <input type="text" id="nomeFilter" placeholder="Digite parte do nome">
+      </div>
+      <div>
+        <label>Classificação mínima</label>
+        <input type="number" id="classMin" placeholder="Ex.: 1">
+      </div>
+      <div>
+        <label>Classificação máxima</label>
+        <input type="number" id="classMax" placeholder="Ex.: 100">
+      </div>
+    </div>
+
+    <div style="margin-top: 12px; display: flex; gap: 10px; flex-wrap: wrap;">
+      <button onclick="aplicarFiltros()">Pesquisar</button>
+      <button onclick="limparFiltros()" style="background:#111827;">Limpar</button>
+    </div>
+
+    <p style="margin-top:12px;">
+      <strong>Total carregado:</strong> <span id="totalCount">0</span> |
+      <strong>Total filtrado:</strong> <span id="filteredCount">0</span>
+    </p>
+
+    <p id="status">Carregando Excel...</p>
+  </div>
+
+  <div class="box">
+    <table>
+      <thead>
+        <tr>
+          <th>Cargo</th>
+          <th>Nome</th>
+          <th>Classificação</th>
+        </tr>
+      </thead>
+      <tbody id="tableBody">
+        <tr><td colspan="3">Nenhum dado carregado.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <script>
+    const EXCEL_FILE = "resultado_extraido.xlsx";
+    let allRows = [];
+    let filteredRows = [];
+
+    async function carregarExcel() {
+      try {
+        const response = await fetch(EXCEL_FILE);
+        if (!response.ok) {
+          throw new Error("Não foi possível abrir o arquivo " + EXCEL_FILE);
+        }
+
+        const arrayBuffer = await response.arrayBuffer();
+        const workbook = XLSX.read(arrayBuffer, { type: "array" });
+        const firstSheet = workbook.SheetNames[0];
+        const worksheet = workbook.Sheets[firstSheet];
+        const data = XLSX.utils.sheet_to_json(worksheet, { defval: "" });
+
+        allRows = data
+          .map(row => ({
+            Cargo: String(row["Cargo"] || "").trim(),
+            Nome: String(row["Nome"] || "").trim(),
+            Classificação: Number(row["Classificação"])
+          }))
+          .filter(row =>
+            row.Cargo &&
+            row.Nome &&
+            !Number.isNaN(row.Classificação)
+          );
+
+        preencherFiltroCargo();
+        filteredRows = [...allRows];
+        renderTabela(filteredRows);
+
+        document.getElementById("totalCount").textContent = allRows.length;
+        document.getElementById("filteredCount").textContent = filteredRows.length;
+        document.getElementById("status").textContent = "Excel carregado com sucesso.";
+      } catch (e) {
+        document.getElementById("status").textContent = "Erro: " + e.message;
+      }
+    }
+
+    function preencherFiltroCargo() {
+      const select = document.getElementById("cargoFilter");
+      const cargos = [...new Set(allRows.map(r => r.Cargo))].sort((a, b) => a.localeCompare(b, "pt-BR"));
+
+      cargos.forEach(cargo => {
+        const option = document.createElement("option");
+        option.value = cargo;
+        option.textContent = cargo;
+        select.appendChild(option);
+      });
+    }
+
+    function aplicarFiltros() {
+      const cargo = document.getElementById("cargoFilter").value.trim();
+      const nome = document.getElementById("nomeFilter").value.trim().toLowerCase();
+      const classMin = document.getElementById("classMin").value;
+      const classMax = document.getElementById("classMax").value;
+
+      filteredRows = allRows.filter(row => {
+        const okCargo = !cargo || row.Cargo === cargo;
+        const okNome = !nome || row.Nome.toLowerCase().includes(nome);
+        const okMin = !classMin || row.Classificação >= Number(classMin);
+        const okMax = !classMax || row.Classificação <= Number(classMax);
+        return okCargo && okNome && okMin && okMax;
+      });
+
+      filteredRows.sort((a, b) => a.Classificação - b.Classificação || a.Nome.localeCompare(b.Nome, "pt-BR"));
+
+      renderTabela(filteredRows);
+      document.getElementById("filteredCount").textContent = filteredRows.length;
+    }
+
+    function limparFiltros() {
+      document.getElementById("cargoFilter").value = "";
+      document.getElementById("nomeFilter").value = "";
+      document.getElementById("classMin").value = "";
+      document.getElementById("classMax").value = "";
+
+      filteredRows = [...allRows];
+      filteredRows.sort((a, b) => a.Classificação - b.Classificação || a.Nome.localeCompare(b.Nome, "pt-BR"));
+
+      renderTabela(filteredRows);
+      document.getElementById("filteredCount").textContent = filteredRows.length;
+    }
+
+    function renderTabela(rows) {
+      const tbody = document.getElementById("tableBody");
+
+      if (!rows.length) {
+        tbody.innerHTML = `<tr><td colspan="3">Nenhum resultado encontrado.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = rows.map(row => `
+        <tr>
+          <td>${escapeHtml(row.Cargo)}</td>
+          <td>${escapeHtml(row.Nome)}</td>
+          <td>${row.Classificação}</td>
+        </tr>
+      `).join("");
+    }
+
+    function escapeHtml(text) {
+      return String(text)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    carregarExcel();
+  </script>
+</body>
+</html>
