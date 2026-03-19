@@ -5,19 +5,19 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Classificação PSS 02 2025</title>
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+
   <style>
     :root {
-      --bg1: #0f172a;
-      --bg2: #1e293b;
-      --card: rgba(255, 255, 255, 0.12);
-      --card-strong: rgba(255, 255, 255, 0.18);
-      --line: rgba(255, 255, 255, 0.18);
-      --text: #f8fafc;
-      --muted: #cbd5e1;
-      --accent: #38bdf8;
-      --accent2: #22c55e;
-      --danger: #f59e0b;
-      --shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+      --bg: #f4f8fb;
+      --card: #ffffff;
+      --primary: #0f766e;
+      --primary-dark: #115e59;
+      --secondary: #0f172a;
+      --line: #dbe4ea;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --accent: #14b8a6;
+      --shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
     }
 
     * {
@@ -27,259 +27,304 @@
     body {
       margin: 0;
       font-family: Arial, Helvetica, sans-serif;
+      background: linear-gradient(180deg, #e6fffb 0%, var(--bg) 180px);
       color: var(--text);
-      background:
-        radial-gradient(circle at top left, #1d4ed8 0%, transparent 30%),
-        radial-gradient(circle at top right, #0ea5e9 0%, transparent 25%),
-        linear-gradient(135deg, var(--bg1), var(--bg2));
-      min-height: 100vh;
     }
 
-    .container {
-      max-width: 1200px;
+    .app {
+      max-width: 700px;
       margin: 0 auto;
-      padding: 24px 16px 40px;
+      padding: 14px 12px 28px;
     }
 
     .hero {
-      background: linear-gradient(135deg, rgba(56, 189, 248, 0.22), rgba(34, 197, 94, 0.16));
-      border: 1px solid var(--line);
-      border-radius: 24px;
-      padding: 28px 20px;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      color: white;
+      border-radius: 20px;
+      padding: 22px 16px;
       box-shadow: var(--shadow);
-      backdrop-filter: blur(10px);
-      margin-bottom: 18px;
+      margin-bottom: 14px;
       text-align: center;
     }
 
     .hero h1 {
-      margin: 0 0 8px;
-      font-size: 30px;
+      margin: 0;
+      font-size: 24px;
       line-height: 1.2;
     }
 
     .hero h2 {
-      margin: 0;
-      font-size: 18px;
-      font-weight: 400;
-      color: var(--muted);
+      margin: 8px 0 0;
+      font-size: 15px;
+      font-weight: normal;
+      opacity: 0.95;
     }
 
     .credit {
-      margin-top: 14px;
-      font-size: 14px;
-      color: #e2e8f0;
-    }
-
-    .pix-box {
-      margin-top: 18px;
-      background: rgba(255, 255, 255, 0.12);
-      border: 1px solid rgba(255, 255, 255, 0.22);
-      border-radius: 18px;
-      padding: 16px;
-      text-align: center;
-    }
-
-    .pix-title {
-      font-size: 16px;
-      font-weight: 700;
-      margin-bottom: 8px;
-      color: #fef3c7;
-    }
-
-    .pix-text {
-      margin: 0 0 10px;
-      color: #f8fafc;
-      line-height: 1.5;
-      font-size: 14px;
-    }
-
-    .pix-number {
-      display: inline-block;
-      background: rgba(34, 197, 94, 0.2);
-      color: #dcfce7;
-      border: 1px solid rgba(34, 197, 94, 0.35);
-      border-radius: 999px;
-      padding: 10px 16px;
-      font-size: 18px;
-      font-weight: bold;
-      letter-spacing: 0.5px;
+      margin-top: 12px;
+      font-size: 13px;
+      opacity: 0.95;
     }
 
     .card {
       background: var(--card);
-      border: 1px solid var(--line);
-      border-radius: 22px;
-      padding: 18px;
+      border-radius: 18px;
+      padding: 14px;
       box-shadow: var(--shadow);
-      backdrop-filter: blur(10px);
-      margin-bottom: 18px;
+      margin-bottom: 14px;
+      border: 1px solid #eef2f5;
     }
 
-    .filters {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
-      gap: 12px;
+    .pix-box {
+      background: #f0fdfa;
+      border: 1px solid #ccfbf1;
+      border-radius: 14px;
+      padding: 14px;
+      text-align: center;
     }
 
-    label {
+    .pix-title {
+      font-size: 15px;
+      font-weight: bold;
+      color: var(--primary-dark);
+      margin-bottom: 8px;
+    }
+
+    .pix-text {
+      font-size: 13px;
+      color: #334155;
+      line-height: 1.5;
+      margin-bottom: 10px;
+    }
+
+    .pix-number {
+      display: inline-block;
+      background: var(--primary);
+      color: white;
+      padding: 10px 14px;
+      border-radius: 999px;
+      font-size: 17px;
+      font-weight: bold;
+    }
+
+    .field {
+      margin-bottom: 12px;
+    }
+
+    .field label {
       display: block;
       font-size: 13px;
-      margin-bottom: 6px;
       color: var(--muted);
+      margin-bottom: 6px;
     }
 
     input, select, button {
       width: 100%;
-      padding: 12px 14px;
       border-radius: 12px;
-      border: 1px solid rgba(255, 255, 255, 0.16);
-      font-size: 14px;
-      outline: none;
+      border: 1px solid var(--line);
+      padding: 12px 14px;
+      font-size: 15px;
     }
 
     input, select {
-      background: rgba(255, 255, 255, 0.92);
-      color: #0f172a;
+      background: #fff;
+      color: var(--text);
     }
 
     button {
-      background: linear-gradient(135deg, var(--accent), #2563eb);
+      background: var(--primary);
       color: white;
+      border: none;
       font-weight: bold;
       cursor: pointer;
-      border: none;
-      transition: transform 0.15s ease, opacity 0.15s ease;
     }
 
-    button:hover {
-      opacity: 0.95;
-      transform: translateY(-1px);
+    button.secondary {
+      background: var(--secondary);
     }
 
-    .secondary {
-      background: linear-gradient(135deg, #334155, #0f172a);
-    }
-
-    .actions {
+    .btns {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 12px;
-      margin-top: 14px;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 6px;
     }
 
     .stats {
-      margin-top: 14px;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 16px;
-      font-size: 14px;
-      color: #e2e8f0;
-    }
-
-    .status {
-      margin-top: 10px;
-      color: #e2e8f0;
-      font-size: 14px;
+      margin-top: 12px;
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.7;
     }
 
     .table-wrap {
-      overflow: auto;
-      border-radius: 16px;
+      overflow-x: auto;
+      border-radius: 14px;
+      border: 1px solid #edf2f7;
     }
 
     table {
       width: 100%;
-      min-width: 720px;
       border-collapse: collapse;
-      background: rgba(255, 255, 255, 0.96);
-      color: #0f172a;
-      border-radius: 16px;
-      overflow: hidden;
+      min-width: 520px;
+      background: white;
     }
 
     th, td {
-      padding: 12px;
-      border-bottom: 1px solid #e2e8f0;
+      padding: 11px 10px;
+      border-bottom: 1px solid #edf2f7;
       text-align: left;
       font-size: 14px;
     }
 
     th {
-      background: #dbeafe;
-      color: #1e3a8a;
+      background: #f8fafc;
+      color: #0f172a;
       position: sticky;
       top: 0;
       z-index: 1;
     }
 
     tr:hover td {
-      background: #eff6ff;
+      background: #f8fffe;
     }
 
-    .no-result {
+    .status {
+      margin-top: 10px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .empty {
       text-align: center;
-      color: #475569;
-      padding: 20px;
+      color: var(--muted);
+      padding: 18px;
     }
 
-    @media (max-width: 600px) {
+    /* POPUP */
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.78);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      z-index: 9999;
+    }
+
+    .modal {
+      width: 100%;
+      max-width: 420px;
+      background: white;
+      border-radius: 22px;
+      padding: 20px 16px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.25);
+      text-align: center;
+    }
+
+    .modal h3 {
+      margin: 0 0 10px;
+      color: var(--primary-dark);
+      font-size: 21px;
+    }
+
+    .modal p {
+      margin: 0 0 12px;
+      color: #334155;
+      line-height: 1.6;
+      font-size: 14px;
+    }
+
+    .modal .pix-highlight {
+      display: inline-block;
+      margin: 8px 0 14px;
+      background: #0f766e;
+      color: white;
+      padding: 10px 14px;
+      border-radius: 999px;
+      font-weight: bold;
+      font-size: 17px;
+    }
+
+    .modal button {
+      margin-top: 6px;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    @media (max-width: 480px) {
       .hero h1 {
-        font-size: 24px;
+        font-size: 21px;
       }
 
       .hero h2 {
-        font-size: 16px;
+        font-size: 14px;
       }
 
-      .pix-number {
-        font-size: 16px;
+      .btns {
+        grid-template-columns: 1fr;
+      }
+
+      th, td {
+        font-size: 13px;
       }
     }
   </style>
 </head>
 <body>
-  <div class="container">
+  <!-- POPUP OBRIGATÓRIO -->
+  <div id="popupOverlay" class="overlay">
+    <div class="modal">
+      <h3>Bem-vindo(a)</h3>
+      <p>
+        Esta consulta foi elaborada para facilitar o acesso à classificação do
+        PSS 02 2025.
+      </p>
+      <p>
+        Se este trabalho te ajudar, você pode colaborar com qualquer valor via Pix:
+      </p>
+      <div class="pix-highlight">31 99617-4800</div>
+      <p>
+        Elaborado por <strong>Data Ápice</strong>.
+      </p>
+      <button onclick="fecharPopup()">Fechar e abrir consulta</button>
+    </div>
+  </div>
+
+  <div class="app hidden" id="mainApp">
     <section class="hero">
       <h1>Classificação PSS 02 2025</h1>
       <h2>Classificação Geral Nível Superior</h2>
       <div class="credit">Elaborado por Data Ápice</div>
+    </section>
 
+    <section class="card">
       <div class="pix-box">
         <div class="pix-title">Ajude a manter este trabalho</div>
-        <p class="pix-text">
-          Se esta consulta te ajudou, considere enviar uma contribuição via Pix para apoiar o desenvolvimento e a manutenção deste trabalho.
-        </p>
+        <div class="pix-text">
+          Se esta página te ajudou, você pode contribuir via Pix para apoiar novos levantamentos e consultas.
+        </div>
         <div class="pix-number">Pix: 31 99617-4800</div>
       </div>
     </section>
 
     <section class="card">
-      <div class="filters">
-        <div>
-          <label for="nomeFilter">Buscar por nome</label>
-          <input type="text" id="nomeFilter" placeholder="Digite parte do nome" />
-        </div>
-
-        <div>
-          <label for="cargoFilter">Cargo</label>
-          <select id="cargoFilter">
-            <option value="">Todos os cargos</option>
-          </select>
-        </div>
-
-        <div>
-          <label for="classMin">Classificação mínima</label>
-          <input type="number" id="classMin" placeholder="Ex.: 1" min="1" />
-        </div>
-
-        <div>
-          <label for="classMax">Classificação máxima</label>
-          <input type="number" id="classMax" placeholder="Ex.: 100" min="1" />
-        </div>
+      <div class="field">
+        <label for="nomeFilter">Buscar por nome</label>
+        <input type="text" id="nomeFilter" placeholder="Digite parte do nome" />
       </div>
 
-      <div class="actions">
+      <div class="field">
+        <label for="cargoFilter">Cargo</label>
+        <select id="cargoFilter">
+          <option value="">Todos os cargos</option>
+        </select>
+      </div>
+
+      <div class="btns">
         <button onclick="filtrar()">Pesquisar</button>
         <button class="secondary" onclick="limparFiltros()">Limpar filtros</button>
       </div>
@@ -303,7 +348,7 @@
             </tr>
           </thead>
           <tbody id="tabela">
-            <tr><td colspan="3" class="no-result">Carregando...</td></tr>
+            <tr><td colspan="3" class="empty">Carregando...</td></tr>
           </tbody>
         </table>
       </div>
@@ -314,6 +359,11 @@
     const arquivo = "resultado_extraido.xlsx";
     let dados = [];
     let dadosFiltrados = [];
+
+    function fecharPopup() {
+      document.getElementById("popupOverlay").classList.add("hidden");
+      document.getElementById("mainApp").classList.remove("hidden");
+    }
 
     async function carregar() {
       const status = document.getElementById("status");
@@ -351,18 +401,19 @@
       } catch (erro) {
         status.textContent = "Erro ao carregar o Excel: " + erro.message;
         document.getElementById("tabela").innerHTML =
-          "<tr><td colspan='3' class='no-result'>Não foi possível carregar os dados.</td></tr>";
+          "<tr><td colspan='3' class='empty'>Não foi possível carregar os dados.</td></tr>";
       }
     }
 
     function preencherCargos() {
-      const cargos = [...new Set(dados.map(x => x.Cargo))].sort((a, b) => a.localeCompare(b, "pt-BR"));
       const select = document.getElementById("cargoFilter");
+      const cargos = [...new Set(dados.map(x => x.Cargo))]
+        .sort((a, b) => a.localeCompare(b, "pt-BR"));
 
-      cargos.forEach(c => {
+      cargos.forEach(cargo => {
         const opt = document.createElement("option");
-        opt.value = c;
-        opt.textContent = c;
+        opt.value = cargo;
+        opt.textContent = cargo;
         select.appendChild(opt);
       });
     }
@@ -377,15 +428,11 @@
     function filtrar() {
       const nome = document.getElementById("nomeFilter").value.trim().toLowerCase();
       const cargo = document.getElementById("cargoFilter").value;
-      const min = document.getElementById("classMin").value;
-      const max = document.getElementById("classMax").value;
 
-      dadosFiltrados = dados.filter(x => {
-        const okNome = !nome || x.Nome.toLowerCase().includes(nome);
-        const okCargo = !cargo || x.Cargo === cargo;
-        const okMin = !min || x.Classificação >= Number(min);
-        const okMax = !max || x.Classificação <= Number(max);
-        return okNome && okCargo && okMin && okMax;
+      dadosFiltrados = dados.filter(item => {
+        const okNome = !nome || item.Nome.toLowerCase().includes(nome);
+        const okCargo = !cargo || item.Cargo === cargo;
+        return okNome && okCargo;
       });
 
       ordenarDados(dadosFiltrados);
@@ -395,8 +442,6 @@
     function limparFiltros() {
       document.getElementById("nomeFilter").value = "";
       document.getElementById("cargoFilter").value = "";
-      document.getElementById("classMin").value = "";
-      document.getElementById("classMax").value = "";
 
       dadosFiltrados = [...dados];
       ordenarDados(dadosFiltrados);
@@ -407,16 +452,16 @@
       const tbody = document.getElementById("tabela");
 
       if (!dadosFiltrados.length) {
-        tbody.innerHTML = "<tr><td colspan='3' class='no-result'>Nenhum resultado encontrado.</td></tr>";
+        tbody.innerHTML = "<tr><td colspan='3' class='empty'>Nenhum resultado encontrado.</td></tr>";
         document.getElementById("filtrado").textContent = "0";
         return;
       }
 
-      tbody.innerHTML = dadosFiltrados.map(x => `
+      tbody.innerHTML = dadosFiltrados.map(item => `
         <tr>
-          <td>${escapeHtml(x.Cargo)}</td>
-          <td>${escapeHtml(x.Nome)}</td>
-          <td>${x.Classificação}</td>
+          <td>${escapeHtml(item.Cargo)}</td>
+          <td>${escapeHtml(item.Nome)}</td>
+          <td>${item.Classificação}</td>
         </tr>
       `).join("");
 
@@ -431,6 +476,9 @@
         .replaceAll('"', "&quot;")
         .replaceAll("'", "&#039;");
     }
+
+    document.getElementById("nomeFilter").addEventListener("input", filtrar);
+    document.getElementById("cargoFilter").addEventListener("change", filtrar);
 
     document.addEventListener("DOMContentLoaded", carregar);
   </script>
