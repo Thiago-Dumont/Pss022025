@@ -228,7 +228,7 @@
     </div>
   </div>
 
-  <!-- NOVO POPUP IR -->
+  <!-- POPUP IR -->
   <div class="modal-bg" id="modalIR" style="display: none;">
     <div class="modal">
       <h3>⚠️ Prazo do Imposto de Renda MENOR esse ano!</h3>
@@ -248,7 +248,7 @@
       <p id="tituloCargos"></p>
     </div>
 
-    <!-- AVISO NO SITE SOBRE IR -->
+    <!-- AVISO IR -->
     <div class="link-card aviso-ir">
       <h3>⚠️ Imposto de Renda 2026</h3>
       <p>Prazo do Imposto de Renda menor esse ano.</p>
@@ -307,6 +307,7 @@
 
     function normalizar(texto) {
       return String(texto || "")
+        .replace(/\s+/g, " ")
         .trim()
         .toLowerCase()
         .normalize("NFD")
@@ -314,10 +315,10 @@
     }
 
     function limparTexto(texto) {
-      return String(texto || "").trim();
+      return String(texto || "").replace(/\s+/g, " ").trim();
     }
 
-    function encontrarColuna(obj, possiveisNomes) {
+    function encontrarColunaExata(obj, possiveisNomes) {
       const chaves = Object.keys(obj || {});
       for (const nome of possiveisNomes) {
         const nomeNormalizado = normalizar(nome);
@@ -327,26 +328,71 @@
       return null;
     }
 
-    function transformarLinha(linhaOriginal) {
-      const colNome = encontrarColuna(linhaOriginal, ["Nome"]);
-      const colCargo = encontrarColuna(linhaOriginal, ["Cargo"]);
-      const colClassificacao = encontrarColuna(linhaOriginal, [
+    function encontrarColunaPorTrecho(obj, trechos) {
+      const chaves = Object.keys(obj || {});
+      for (const chave of chaves) {
+        const chaveNormalizada = normalizar(chave);
+        const encontrouTodos = trechos.every(t => chaveNormalizada.includes(normalizar(t)));
+        if (encontrouTodos) return chave;
+      }
+      return null;
+    }
+
+    function encontrarColunaNome(obj) {
+      return encontrarColunaExata(obj, ["Nome"]) ||
+             encontrarColunaPorTrecho(obj, ["nome"]);
+    }
+
+    function encontrarColunaCargo(obj) {
+      return encontrarColunaExata(obj, ["Cargo"]) ||
+             encontrarColunaPorTrecho(obj, ["cargo"]);
+    }
+
+    function encontrarColunaClassificacao(obj) {
+      return encontrarColunaExata(obj, [
         "Classificação",
         "Classificacao",
         "Classificação Geral",
         "Classificacao Geral"
-      ]);
-      const colCotaNegro = encontrarColuna(linhaOriginal, [
+      ]) ||
+      encontrarColunaPorTrecho(obj, ["classificacao", "geral"]) ||
+      encontrarColunaPorTrecho(obj, ["classificacao"]);
+    }
+
+    function encontrarColunaCotaNegro(obj) {
+      return encontrarColunaExata(obj, [
         "Classificação Cota Negro",
         "Classificacao Cota Negro",
-        "RESERVA DE VAGAS AUTODECLARADOS PRETOS OU PARDOS"
-      ]);
-      const colPcd = encontrarColuna(linhaOriginal, [
+        "RESERVA DE VAGAS AUTODECLARADOS PRETOS OU PARDOS",
+        "RESERVA DE VAGAS AUTODECLARADOS PRETOS/PARDOS",
+        "Cota Negro",
+        "Cota Racial"
+      ]) ||
+      encontrarColunaPorTrecho(obj, ["pretos", "pardos"]) ||
+      encontrarColunaPorTrecho(obj, ["autodeclarados", "pretos"]) ||
+      encontrarColunaPorTrecho(obj, ["cota", "negro"]) ||
+      encontrarColunaPorTrecho(obj, ["cota", "racial"]) ||
+      encontrarColunaPorTrecho(obj, ["reserva", "pretos"]) ||
+      encontrarColunaPorTrecho(obj, ["reserva", "pardos"]);
+    }
+
+    function encontrarColunaPCD(obj) {
+      return encontrarColunaExata(obj, [
         "RESERVA DE VAGAS PESSOA COM DEFICIÊNCIA",
         "RESERVA DE VAGAS PESSOA COM DEFICIENCIA",
         "PcD",
         "PCD"
-      ]);
+      ]) ||
+      encontrarColunaPorTrecho(obj, ["pessoa", "deficiencia"]) ||
+      encontrarColunaPorTrecho(obj, ["pcd"]);
+    }
+
+    function transformarLinha(linhaOriginal) {
+      const colNome = encontrarColunaNome(linhaOriginal);
+      const colCargo = encontrarColunaCargo(linhaOriginal);
+      const colClassificacao = encontrarColunaClassificacao(linhaOriginal);
+      const colCotaNegro = encontrarColunaCotaNegro(linhaOriginal);
+      const colPcd = encontrarColunaPCD(linhaOriginal);
 
       return {
         Nome: limparTexto(colNome ? linhaOriginal[colNome] : ""),
