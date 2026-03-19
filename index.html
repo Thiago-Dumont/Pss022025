@@ -1,112 +1,675 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
   <title>Classificação PSS 02 2025</title>
-
   <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
 
   <style>
+    :root {
+      --bg: #eef3f8;
+      --card: #ffffff;
+      --primary: #1e5eff;
+      --primary-dark: #1748c9;
+      --text: #18202a;
+      --muted: #6b7280;
+      --border: #e5e7eb;
+      --success: #16a34a;
+      --danger: #dc2626;
+      --highlight: #fff7d6;
+      --shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+      --radius: 20px;
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
     body {
-      font-family: Arial;
-      padding: 10px;
-      background: #f5f5f5;
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(180deg, #dce8ff 0%, var(--bg) 220px);
+      color: var(--text);
     }
 
-    h1 {
-      text-align: center;
-      font-size: 20px;
+    .app {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 14px 14px 40px;
     }
 
-    input {
+    .hero {
+      background: linear-gradient(135deg, var(--primary), #4f8cff);
+      color: white;
+      border-radius: 28px;
+      padding: 22px 18px;
+      box-shadow: var(--shadow);
+      margin-top: 8px;
+      position: sticky;
+      top: 10px;
+      z-index: 10;
+    }
+
+    .hero-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .logo-badge {
+      width: 48px;
+      height: 48px;
+      border-radius: 16px;
+      background: rgba(255,255,255,0.18);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      font-weight: bold;
+      backdrop-filter: blur(6px);
+    }
+
+    .hero h1 {
+      margin: 0;
+      font-size: 22px;
+      line-height: 1.15;
+    }
+
+    .hero p {
+      margin: 6px 0 0;
+      font-size: 13px;
+      opacity: 0.95;
+    }
+
+    .hero-meta {
+      margin-top: 14px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .meta-pill {
+      background: rgba(255,255,255,0.18);
+      border: 1px solid rgba(255,255,255,0.15);
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      backdrop-filter: blur(6px);
+    }
+
+    .section {
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 16px;
+      box-shadow: var(--shadow);
+      margin-top: 14px;
+    }
+
+    .section-title {
+      font-size: 16px;
+      font-weight: bold;
+      margin: 0 0 12px;
+    }
+
+    .search-box {
+      position: relative;
+    }
+
+    .search-box input,
+    .field,
+    .btn {
       width: 100%;
-      padding: 10px;
-      margin-bottom: 10px;
+      border: none;
+      outline: none;
+      border-radius: 16px;
       font-size: 16px;
     }
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      background: white;
+    .search-box input,
+    .field {
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      padding: 14px 14px;
+      color: var(--text);
     }
 
-    th, td {
-      padding: 8px;
-      border: 1px solid #ccc;
-      font-size: 12px;
-      text-align: left;
+    .grid {
+      display: grid;
+      gap: 10px;
     }
 
-    th {
-      background: #007bff;
+    .btn {
+      background: var(--primary);
       color: white;
+      padding: 14px;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 8px 18px rgba(30, 94, 255, 0.22);
+    }
+
+    .btn:active {
+      transform: scale(0.99);
+    }
+
+    .btn.secondary {
+      background: #eff4ff;
+      color: var(--primary);
+      box-shadow: none;
+      border: 1px solid #d7e3ff;
+    }
+
+    .status-bar {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+
+    .status-chip {
+      padding: 8px 12px;
+      background: #f3f4f6;
+      border-radius: 999px;
+      font-size: 12px;
+      color: #374151;
+    }
+
+    .result-card {
+      background: linear-gradient(180deg, #f3f8ff, #ffffff);
+      border: 1px solid #dbe7ff;
+      border-radius: 18px;
+      padding: 14px;
+      margin-top: 12px;
+      display: none;
+    }
+
+    .result-card strong {
+      color: var(--primary-dark);
+    }
+
+    .list-wrap {
+      display: grid;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .person-card {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 14px;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.04);
+    }
+
+    .person-card.highlight {
+      background: var(--highlight);
+      border-color: #f4d35e;
+    }
+
+    .person-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .rank-badge {
+      min-width: 52px;
+      text-align: center;
+      padding: 8px 10px;
+      background: var(--primary);
+      color: white;
+      border-radius: 14px;
+      font-size: 12px;
+      font-weight: bold;
+      box-shadow: 0 8px 18px rgba(30, 94, 255, 0.2);
+    }
+
+    .person-name {
+      font-size: 16px;
+      font-weight: bold;
+      line-height: 1.25;
+      margin: 0;
+    }
+
+    .person-cargo {
+      font-size: 13px;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 6px;
+    }
+
+    .mini-box {
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 10px;
+    }
+
+    .mini-label {
+      font-size: 11px;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+
+    .mini-value {
+      font-size: 15px;
+      font-weight: bold;
+      color: var(--text);
+    }
+
+    .footer-note {
+      text-align: center;
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 16px;
+    }
+
+    .modal-bg {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.74);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+      z-index: 99999;
+    }
+
+    .modal {
+      width: 100%;
+      max-width: 430px;
+      background: white;
+      border-radius: 26px;
+      padding: 22px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.28);
+      text-align: center;
+    }
+
+    .modal-icon {
+      width: 68px;
+      height: 68px;
+      margin: 0 auto 12px;
+      border-radius: 20px;
+      background: linear-gradient(135deg, #1e5eff, #7aa6ff);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      font-weight: bold;
+    }
+
+    .modal h2 {
+      margin: 0 0 10px;
+      font-size: 22px;
+      color: var(--text);
+    }
+
+    .modal p {
+      margin: 8px 0;
+      color: #374151;
+      line-height: 1.5;
+      font-size: 15px;
+    }
+
+    .pix-box {
+      margin: 14px 0;
+      padding: 14px;
+      border-radius: 18px;
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+    }
+
+    .pix-label {
+      font-size: 12px;
+      color: var(--success);
+      font-weight: bold;
+      margin-bottom: 6px;
+    }
+
+    .pix-number {
+      font-size: 24px;
+      font-weight: bold;
+      color: #15803d;
+      word-break: break-word;
+    }
+
+    .modal .btn-close {
+      background: var(--danger);
+      box-shadow: none;
+      margin-top: 8px;
+    }
+
+    .loading {
+      text-align: center;
+      color: var(--muted);
+      padding: 12px 0 4px;
+      font-size: 14px;
+    }
+
+    @media (max-width: 520px) {
+      .hero {
+        border-radius: 24px;
+        padding: 18px 16px;
+      }
+
+      .hero h1 {
+        font-size: 20px;
+      }
+
+      .person-name {
+        font-size: 15px;
+      }
+
+      .info-grid {
+        grid-template-columns: 1fr 1fr;
+      }
     }
   </style>
 </head>
-
 <body>
+  <div class="modal-bg" id="pixModal">
+    <div class="modal">
+      <div class="modal-icon">R$</div>
+      <h2>Apoie este trabalho</h2>
+      <p><strong>Classificação PSS 02 2025</strong></p>
+      <p>Se esta página te ajudou, envie um PIX para apoiar o projeto.</p>
 
-<h1>Classificação PSS 02 2025</h1>
+      <div class="pix-box">
+        <div class="pix-label">PIX</div>
+        <div class="pix-number">31 99617-4800</div>
+      </div>
 
-<input type="text" id="filtro" placeholder="Digite o nome...">
+      <p>Elaborado por <strong>Data Ápice</strong>.</p>
+      <button class="btn btn-close" onclick="fecharModal()">Fechar e entrar</button>
+    </div>
+  </div>
 
-<table id="tabela">
-  <thead>
-    <tr>
-      <th>Cargo</th>
-      <th>Nome</th>
-      <th>Classificação Geral</th>
-      <th>Cota Negro</th>
-    </tr>
-  </thead>
-  <tbody></tbody>
-</table>
+  <div class="app">
+    <div class="hero">
+      <div class="hero-top">
+        <div>
+          <h1>Classificação PSS 02 2025</h1>
+          <p>Classificação geral nível superior</p>
+        </div>
+        <div class="logo-badge">DA</div>
+      </div>
 
-<script>
-const url = "resultado_extraido_atualizado.xlsx"; // arquivo no GitHub
+      <div class="hero-meta">
+        <div class="meta-pill">Pesquisa por nome</div>
+        <div class="meta-pill">Filtro por cargo</div>
+        <div class="meta-pill">Cota negro</div>
+      </div>
+    </div>
 
-fetch(url)
-  .then(res => res.arrayBuffer())
-  .then(data => {
-    const workbook = XLSX.read(data, { type: "array" });
-    const sheet = workbook.Sheets[workbook.SheetNames[0]];
-    const json = XLSX.utils.sheet_to_json(sheet);
+    <div class="section">
+      <div class="section-title">Pesquisar classificação</div>
 
-    window.dados = json;
-    renderizar(json);
-  });
+      <div class="grid">
+        <div class="search-box">
+          <input type="text" id="filtroNome" placeholder="Digite o nome" />
+        </div>
 
-function renderizar(dados) {
-  const tbody = document.querySelector("#tabela tbody");
-  tbody.innerHTML = "";
+        <select id="filtroCargo" class="field">
+          <option value="">Todos os cargos</option>
+        </select>
 
-  dados.forEach(item => {
-    const tr = document.createElement("tr");
+        <select id="ordenacao" class="field">
+          <option value="crescente">Classificação: menor para maior</option>
+          <option value="decrescente">Classificação: maior para menor</option>
+        </select>
 
-    tr.innerHTML = `
-      <td>${item.Cargo || ""}</td>
-      <td>${item.Nome || ""}</td>
-      <td>${item.Classificacao || item["Classificação"] || ""}</td>
-      <td>${item.Classificacao_Cota_Negro || ""}</td>
-    `;
+        <button class="btn" onclick="aplicarFiltros()">Filtrar resultados</button>
 
-    tbody.appendChild(tr);
-  });
-}
+        <input type="text" id="buscarColocacao" class="field" placeholder="Digite seu nome para ver sua colocação" />
+        <button class="btn secondary" onclick="verMinhaColocacao()">Ver minha colocação</button>
+      </div>
 
-// filtro por nome
-document.getElementById("filtro").addEventListener("input", function() {
-  const texto = this.value.toLowerCase();
+      <div class="status-bar">
+        <div class="status-chip" id="statusResultados">Carregando dados...</div>
+        <div class="status-chip">Elaborado por Data Ápice</div>
+      </div>
 
-  const filtrado = window.dados.filter(item =>
-    (item.Nome || "").toLowerCase().includes(texto)
-  );
+      <div class="result-card" id="resultadoColocacao"></div>
+    </div>
 
-  renderizar(filtrado);
-});
-</script>
+    <div class="section">
+      <div class="section-title">Lista de classificação</div>
+      <div class="loading" id="loadingMsg">Lendo arquivo Excel...</div>
+      <div class="list-wrap" id="listaResultados"></div>
+      <div class="footer-note">Consulta otimizada para celular</div>
+    </div>
+  </div>
 
+  <script>
+    const ARQUIVO_EXCEL = "resultado_extraido_atualizado.xlsx";
+
+    let dadosOriginais = [];
+    let dadosFiltrados = [];
+    let nomeDestacado = "";
+
+    function fecharModal() {
+      document.getElementById("pixModal").style.display = "none";
+    }
+
+    function normalizarTexto(texto) {
+      return (texto || "")
+        .toString()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .toLowerCase()
+        .trim();
+    }
+
+    function obterClassificacao(item) {
+      const valor =
+        item.Classificacao ??
+        item.classificacao ??
+        item["Classificação"] ??
+        item["CLASSIFICAÇÃO"] ??
+        item["Classificacao Geral"] ??
+        item["Classificação Geral"] ??
+        item["Classificacao_Geral"] ??
+        item["Classificação_Geral"] ??
+        "";
+
+      const numero = Number(valor);
+      return isNaN(numero) ? 999999 : numero;
+    }
+
+    function obterCotaNegro(item) {
+      return item.Classificacao_Cota_Negro ??
+             item["Classificação Cota Negro"] ??
+             item["Classificacao Cota Negro"] ??
+             item["Cota Negro"] ??
+             "";
+    }
+
+    function preencherCargos() {
+      const select = document.getElementById("filtroCargo");
+      const cargos = [...new Set(
+        dadosOriginais.map(item => (item.Cargo || "").toString().trim()).filter(Boolean)
+      )].sort((a, b) => a.localeCompare(b, "pt-BR"));
+
+      select.innerHTML = `<option value="">Todos os cargos</option>`;
+
+      cargos.forEach(cargo => {
+        const option = document.createElement("option");
+        option.value = cargo;
+        option.textContent = cargo;
+        select.appendChild(option);
+      });
+    }
+
+    function atualizarStatus(texto) {
+      document.getElementById("statusResultados").textContent = texto;
+    }
+
+    function renderizarLista(lista) {
+      const container = document.getElementById("listaResultados");
+      const loading = document.getElementById("loadingMsg");
+      container.innerHTML = "";
+      loading.style.display = "none";
+
+      if (!lista.length) {
+        container.innerHTML = `
+          <div class="person-card">
+            <div class="person-name">Nenhum resultado encontrado</div>
+            <div class="person-cargo">Tente ajustar os filtros.</div>
+          </div>
+        `;
+        atualizarStatus("0 resultado(s)");
+        return;
+      }
+
+      lista.forEach((item, index) => {
+        const nome = item.Nome || "";
+        const cargo = item.Cargo || "";
+        const classificacao = obterClassificacao(item);
+        const cotaNegro = obterCotaNegro(item);
+
+        const card = document.createElement("div");
+        card.className = "person-card";
+
+        if (nomeDestacado && normalizarTexto(nome) === normalizarTexto(nomeDestacado)) {
+          card.classList.add("highlight");
+        }
+
+        card.innerHTML = `
+          <div class="person-top">
+            <div>
+              <div class="person-name">${nome}</div>
+              <div class="person-cargo">${cargo}</div>
+            </div>
+            <div class="rank-badge">#${index + 1}</div>
+          </div>
+
+          <div class="info-grid">
+            <div class="mini-box">
+              <div class="mini-label">Classificação Geral</div>
+              <div class="mini-value">${classificacao !== 999999 ? classificacao : ""}</div>
+            </div>
+
+            <div class="mini-box">
+              <div class="mini-label">Cota Negro</div>
+              <div class="mini-value">${cotaNegro || ""}</div>
+            </div>
+          </div>
+        `;
+
+        container.appendChild(card);
+      });
+
+      atualizarStatus(`${lista.length} resultado(s)`);
+    }
+
+    function aplicarFiltros() {
+      const nome = normalizarTexto(document.getElementById("filtroNome").value);
+      const cargo = document.getElementById("filtroCargo").value;
+      const ordenacao = document.getElementById("ordenacao").value;
+
+      let resultado = [...dadosOriginais];
+
+      if (nome) {
+        resultado = resultado.filter(item =>
+          normalizarTexto(item.Nome).includes(nome)
+        );
+      }
+
+      if (cargo) {
+        resultado = resultado.filter(item => (item.Cargo || "") === cargo);
+      }
+
+      resultado.sort((a, b) => {
+        const classA = obterClassificacao(a);
+        const classB = obterClassificacao(b);
+        return ordenacao === "crescente" ? classA - classB : classB - classA;
+      });
+
+      dadosFiltrados = resultado;
+      nomeDestacado = "";
+      document.getElementById("resultadoColocacao").style.display = "none";
+      renderizarLista(dadosFiltrados);
+    }
+
+    function verMinhaColocacao() {
+      const nomeBuscado = document.getElementById("buscarColocacao").value.trim();
+      const caixa = document.getElementById("resultadoColocacao");
+
+      if (!nomeBuscado) {
+        caixa.style.display = "block";
+        caixa.innerHTML = "Digite seu nome para localizar sua colocação.";
+        nomeDestacado = "";
+        renderizarLista(dadosFiltrados.length ? dadosFiltrados : dadosOriginais);
+        return;
+      }
+
+      const listaAtual = dadosFiltrados.length
+        ? dadosFiltrados
+        : [...dadosOriginais].sort((a, b) => obterClassificacao(a) - obterClassificacao(b));
+
+      const indice = listaAtual.findIndex(item =>
+        normalizarTexto(item.Nome).includes(normalizarTexto(nomeBuscado))
+      );
+
+      if (indice === -1) {
+        caixa.style.display = "block";
+        caixa.innerHTML = "Nome não encontrado na lista exibida.";
+        nomeDestacado = "";
+        renderizarLista(listaAtual);
+        return;
+      }
+
+      const pessoa = listaAtual[indice];
+      nomeDestacado = pessoa.Nome || "";
+
+      caixa.style.display = "block";
+      caixa.innerHTML = `
+        <strong>Resultado encontrado</strong><br><br>
+        <strong>Nome:</strong> ${pessoa.Nome || ""}<br>
+        <strong>Cargo:</strong> ${pessoa.Cargo || ""}<br>
+        <strong>Posição na lista exibida:</strong> ${indice + 1}<br>
+        <strong>Classificação Geral:</strong> ${obterClassificacao(pessoa) !== 999999 ? obterClassificacao(pessoa) : ""}<br>
+        <strong>Cota Negro:</strong> ${obterCotaNegro(pessoa) || ""}
+      `;
+
+      renderizarLista(listaAtual);
+    }
+
+    fetch(ARQUIVO_EXCEL)
+      .then(response => response.arrayBuffer())
+      .then(data => {
+        const workbook = XLSX.read(data, { type: "array" });
+        const primeiraAba = workbook.Sheets[workbook.SheetNames[0]];
+        const json = XLSX.utils.sheet_to_json(primeiraAba, { defval: "" });
+
+        dadosOriginais = json.sort((a, b) => obterClassificacao(a) - obterClassificacao(b));
+        dadosFiltrados = [...dadosOriginais];
+
+        preencherCargos();
+        renderizarLista(dadosFiltrados);
+      })
+      .catch(error => {
+        document.getElementById("loadingMsg").style.display = "none";
+        document.getElementById("listaResultados").innerHTML = `
+          <div class="person-card">
+            <div class="person-name">Erro ao carregar o Excel</div>
+            <div class="person-cargo">Verifique se o arquivo <strong>resultado_extraido_atualizado.xlsx</strong> está no mesmo repositório do index.html.</div>
+          </div>
+        `;
+        atualizarStatus("Erro ao carregar dados");
+        console.error(error);
+      });
+  </script>
 </body>
 </html>
