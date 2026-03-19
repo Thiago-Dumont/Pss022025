@@ -1,518 +1,227 @@
-<!DOCTYPE html>
+  <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>PSS 02 2025 | Nível Superior</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PSS 02 2025</title>
+
   <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
 
   <style>
-    * {
-      box-sizing: border-box;
-    }
-
     body {
       margin: 0;
       font-family: Arial, sans-serif;
       background: #f5f7fb;
-      color: #1f2937;
+      color: #111;
     }
 
     .container {
-      max-width: 760px;
-      margin: 0 auto;
+      max-width: 600px;
+      margin: auto;
       padding: 16px;
     }
 
     .topo {
-      background: #ffffff;
-      border-radius: 18px;
-      padding: 20px 16px;
       text-align: center;
-      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
-      margin-bottom: 14px;
+      margin-bottom: 20px;
     }
 
-    .titulo-menor {
-      font-size: 13px;
-      color: #2563eb;
-      font-weight: bold;
-      letter-spacing: 0.5px;
-      margin-bottom: 6px;
-      text-transform: uppercase;
-    }
-
-    .titulo-maior {
-      font-size: 28px;
-      font-weight: 800;
-      color: #111827;
+    .topo h1 {
       margin: 0;
-      line-height: 1.1;
+      font-size: 26px;
     }
 
-    .subtitulo {
-      margin-top: 8px;
-      font-size: 16px;
-      color: #4b5563;
-      font-weight: 600;
+    .topo p {
+      margin: 5px 0 0;
+      color: #555;
+      font-size: 14px;
     }
 
-    .autor {
-      margin-top: 8px;
-      font-size: 13px;
-      color: #6b7280;
-    }
-
-    .bloco {
-      background: #ffffff;
-      border-radius: 18px;
+    input {
+      width: 100%;
       padding: 14px;
-      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
-      margin-bottom: 14px;
-    }
-
-    .campo {
-      width: 100%;
-      padding: 13px 14px;
-      border: 1px solid #dbe1ea;
       border-radius: 12px;
-      font-size: 15px;
+      border: 1px solid #ccc;
+      font-size: 16px;
       margin-bottom: 10px;
-      background: #fff;
-      outline: none;
     }
 
-    .campo:focus {
-      border-color: #2563eb;
-    }
-
-    .botoes {
-      display: grid;
-      gap: 10px;
-    }
-
-    .botao {
+    button {
       width: 100%;
+      padding: 14px;
       border: none;
       border-radius: 12px;
-      padding: 13px;
-      font-size: 15px;
+      background: #2563eb;
+      color: white;
+      font-size: 16px;
       font-weight: bold;
       cursor: pointer;
     }
 
-    .botao-azul {
-      background: #2563eb;
-      color: white;
-    }
-
-    .botao-cinza {
-      background: #eef2f7;
-      color: #1f2937;
-    }
-
-    .info {
-      font-size: 13px;
-      color: #6b7280;
-      margin-top: 8px;
-      text-align: center;
-    }
-
     .resultado {
-      display: none;
-      margin-top: 12px;
-      padding: 12px;
-      border-radius: 14px;
-      background: #eff6ff;
-      border: 1px solid #bfdbfe;
-      font-size: 14px;
-      line-height: 1.6;
-    }
-
-    .lista {
+      margin-top: 20px;
       display: grid;
       gap: 10px;
     }
 
     .card {
-      background: #ffffff;
-      border: 1px solid #e5e7eb;
-      border-radius: 16px;
+      background: white;
       padding: 14px;
-    }
-
-    .card.destaque {
-      border: 2px solid #2563eb;
-      background: #f8fbff;
-    }
-
-    .linha1 {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 10px;
+      border-radius: 14px;
+      border: 1px solid #ddd;
     }
 
     .nome {
       font-size: 16px;
       font-weight: bold;
-      color: #111827;
-      line-height: 1.3;
     }
 
     .cargo {
       font-size: 13px;
-      color: #6b7280;
+      color: #666;
+      margin-bottom: 8px;
+    }
+
+    .info {
+      font-size: 14px;
       margin-top: 4px;
     }
 
-    .posicao {
-      min-width: 48px;
+    .destaque {
+      border: 2px solid #2563eb;
+      background: #f0f6ff;
+    }
+
+    .msg {
       text-align: center;
-      padding: 8px 10px;
-      border-radius: 12px;
-      background: #2563eb;
-      color: white;
-      font-size: 13px;
-      font-weight: bold;
-    }
-
-    .linha2 {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      margin-top: 12px;
-    }
-
-    .mini {
-      background: #f9fafb;
-      border-radius: 12px;
-      padding: 10px;
-      border: 1px solid #eceff3;
-    }
-
-    .mini-label {
-      font-size: 11px;
-      color: #6b7280;
-      margin-bottom: 4px;
-    }
-
-    .mini-valor {
-      font-size: 15px;
-      font-weight: bold;
-      color: #111827;
-    }
-
-    .carregando,
-    .vazio {
-      text-align: center;
-      color: #6b7280;
-      font-size: 14px;
-      padding: 10px 0;
+      margin-top: 20px;
+      color: #666;
     }
 
     .modal-bg {
       position: fixed;
       inset: 0;
-      background: rgba(0, 0, 0, 0.65);
+      background: rgba(0,0,0,0.7);
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 16px;
-      z-index: 9999;
     }
 
     .modal {
-      width: 100%;
-      max-width: 380px;
       background: white;
-      border-radius: 18px;
-      padding: 22px 18px;
+      padding: 20px;
+      border-radius: 16px;
       text-align: center;
-    }
-
-    .modal h2 {
-      margin: 0 0 10px;
-      font-size: 20px;
-      color: #111827;
-    }
-
-    .modal p {
-      margin: 8px 0;
-      color: #4b5563;
-      font-size: 14px;
-      line-height: 1.5;
+      max-width: 300px;
     }
 
     .pix {
-      margin: 14px 0;
-      font-size: 22px;
+      font-size: 20px;
       font-weight: bold;
-      color: #16a34a;
-    }
-
-    @media (max-width: 600px) {
-      .titulo-maior {
-        font-size: 24px;
-      }
-
-      .subtitulo {
-        font-size: 15px;
-      }
+      color: green;
+      margin: 10px 0;
     }
   </style>
 </head>
+
 <body>
-  <div class="modal-bg" id="pixModal">
-    <div class="modal">
-      <h2>Apoie este trabalho</h2>
-      <p>Se esta página te ajudou, envie um PIX para apoiar o projeto.</p>
-      <div class="pix">31 99617-4800</div>
-      <p>Elaborado por <strong>Data Ápice</strong>.</p>
-      <button class="botao botao-azul" onclick="fecharModal()">Fechar e entrar</button>
-    </div>
+
+<div class="modal-bg" id="modal">
+  <div class="modal">
+    <h3>Apoie este projeto</h3>
+    <p>Se te ajudou, envie um PIX:</p>
+    <div class="pix">31 99617-4800</div>
+    <button onclick="fechar()">Entrar</button>
+  </div>
+</div>
+
+<div class="container">
+
+  <div class="topo">
+    <h1>PSS 02 2025</h1>
+    <p>Nível Superior</p>
   </div>
 
-  <div class="container">
-    <div class="topo">
-      <div class="titulo-menor">Classificação</div>
-      <h1 class="titulo-maior">PSS 02 2025</h1>
-      <div class="subtitulo">Nível Superior</div>
-      <div class="autor">Elaborado por Data Ápice</div>
-    </div>
+  <input type="text" id="nome" placeholder="Digite seu nome">
 
-    <div class="bloco">
-      <input type="text" id="filtroNome" class="campo" placeholder="Pesquisar por nome" />
+  <button onclick="buscar()">Buscar</button>
 
-      <select id="filtroCargo" class="campo">
-        <option value="">Todos os cargos</option>
-      </select>
+  <div id="resultado" class="resultado"></div>
 
-      <div class="botoes">
-        <button class="botao botao-azul" onclick="aplicarFiltros()">Filtrar resultados</button>
-        <input type="text" id="buscarColocacao" class="campo" placeholder="Digite seu nome para ver sua colocação" />
-        <button class="botao botao-cinza" onclick="verMinhaColocacao()">Ver minha colocação</button>
+  <div id="msg" class="msg"></div>
+
+</div>
+
+<script>
+const arquivo = "resultado_extraido_atualizado.xlsx";
+let dados = [];
+
+function fechar(){
+  document.getElementById("modal").style.display = "none";
+}
+
+function normalizar(texto){
+  return (texto || "")
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "");
+}
+
+function getClassificacao(item){
+  return item.Classificacao ??
+         item["Classificação"] ??
+         item["Classificação Geral"] ??
+         "";
+}
+
+function getCota(item){
+  return item.Classificacao_Cota_Negro ??
+         item["Classificação Cota Negro"] ??
+         "";
+}
+
+function buscar(){
+  const nome = normalizar(document.getElementById("nome").value);
+  const div = document.getElementById("resultado");
+  const msg = document.getElementById("msg");
+
+  div.innerHTML = "";
+  msg.innerHTML = "";
+
+  if(!nome){
+    msg.innerHTML = "Digite um nome.";
+    return;
+  }
+
+  const resultado = dados.filter(p =>
+    normalizar(p.Nome).includes(nome)
+  );
+
+  if(resultado.length === 0){
+    msg.innerHTML = "Nome não encontrado.";
+    return;
+  }
+
+  resultado.forEach((p, i) => {
+    div.innerHTML += `
+      <div class="card destaque">
+        <div class="nome">${p.Nome}</div>
+        <div class="cargo">${p.Cargo || ""}</div>
+        <div class="info">Classificação: ${getClassificacao(p)}</div>
+        <div class="info">Cota Negro: ${getCota(p)}</div>
       </div>
+    `;
+  });
+}
 
-      <div class="info" id="statusResultados">Carregando dados...</div>
-      <div class="resultado" id="resultadoColocacao"></div>
-    </div>
+fetch(arquivo)
+  .then(r => r.arrayBuffer())
+  .then(data => {
+    const wb = XLSX.read(data, {type: "array"});
+    const ws = wb.Sheets[wb.SheetNames[0]];
+    dados = XLSX.utils.sheet_to_json(ws, {defval: ""});
+  });
+</script>
 
-    <div class="bloco">
-      <div class="carregando" id="loadingMsg">Lendo arquivo Excel...</div>
-      <div class="lista" id="listaResultados"></div>
-    </div>
-  </div>
-
-  <script>
-    const ARQUIVO_EXCEL = "resultado_extraido_atualizado.xlsx";
-
-    let dadosOriginais = [];
-    let dadosFiltrados = [];
-    let nomeDestacado = "";
-
-    function fecharModal() {
-      document.getElementById("pixModal").style.display = "none";
-    }
-
-    function normalizarTexto(texto) {
-      return (texto || "")
-        .toString()
-        .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "")
-        .toLowerCase()
-        .trim();
-    }
-
-    function obterClassificacao(item) {
-      const valor =
-        item.Classificacao ??
-        item.classificacao ??
-        item["Classificação"] ??
-        item["Classificacao Geral"] ??
-        item["Classificação Geral"] ??
-        item["Classificacao_Geral"] ??
-        item["Classificação_Geral"] ??
-        "";
-
-      const numero = Number(valor);
-      return isNaN(numero) ? 999999 : numero;
-    }
-
-    function obterCotaNegro(item) {
-      return item.Classificacao_Cota_Negro ??
-             item["Classificação Cota Negro"] ??
-             item["Classificacao Cota Negro"] ??
-             item["Cota Negro"] ??
-             "";
-    }
-
-    function preencherCargos() {
-      const select = document.getElementById("filtroCargo");
-      const cargos = [...new Set(
-        dadosOriginais.map(item => (item.Cargo || "").toString().trim()).filter(Boolean)
-      )].sort((a, b) => a.localeCompare(b, "pt-BR"));
-
-      select.innerHTML = `<option value="">Todos os cargos</option>`;
-
-      cargos.forEach(cargo => {
-        const option = document.createElement("option");
-        option.value = cargo;
-        option.textContent = cargo;
-        select.appendChild(option);
-      });
-    }
-
-    function atualizarStatus(texto) {
-      document.getElementById("statusResultados").textContent = texto;
-    }
-
-    function renderizarLista(lista) {
-      const container = document.getElementById("listaResultados");
-      const loading = document.getElementById("loadingMsg");
-
-      container.innerHTML = "";
-      loading.style.display = "none";
-
-      if (!lista.length) {
-        container.innerHTML = `<div class="vazio">Nenhum resultado encontrado.</div>`;
-        atualizarStatus("0 resultado(s)");
-        return;
-      }
-
-      lista.forEach((item, index) => {
-        const nome = item.Nome || "";
-        const cargo = item.Cargo || "";
-        const classificacao = obterClassificacao(item);
-        const cotaNegro = obterCotaNegro(item);
-
-        const card = document.createElement("div");
-        card.className = "card";
-
-        if (nomeDestacado && normalizarTexto(nome) === normalizarTexto(nomeDestacado)) {
-          card.classList.add("destaque");
-        }
-
-        card.innerHTML = `
-          <div class="linha1">
-            <div>
-              <div class="nome">${nome}</div>
-              <div class="cargo">${cargo}</div>
-            </div>
-            <div class="posicao">#${index + 1}</div>
-          </div>
-
-          <div class="linha2">
-            <div class="mini">
-              <div class="mini-label">Classificação Geral</div>
-              <div class="mini-valor">${classificacao !== 999999 ? classificacao : ""}</div>
-            </div>
-
-            <div class="mini">
-              <div class="mini-label">Cota Negro</div>
-              <div class="mini-valor">${cotaNegro || ""}</div>
-            </div>
-          </div>
-        `;
-
-        container.appendChild(card);
-      });
-
-      atualizarStatus(`${lista.length} resultado(s)`);
-    }
-
-    function aplicarFiltros() {
-      const nome = normalizarTexto(document.getElementById("filtroNome").value);
-      const cargo = document.getElementById("filtroCargo").value;
-
-      let resultado = [...dadosOriginais];
-
-      if (nome) {
-        resultado = resultado.filter(item =>
-          normalizarTexto(item.Nome).includes(nome)
-        );
-      }
-
-      if (cargo) {
-        resultado = resultado.filter(item => (item.Cargo || "") === cargo);
-      }
-
-      resultado.sort((a, b) => obterClassificacao(a) - obterClassificacao(b));
-
-      dadosFiltrados = resultado;
-      nomeDestacado = "";
-      document.getElementById("resultadoColocacao").style.display = "none";
-      renderizarLista(dadosFiltrados);
-    }
-
-    function verMinhaColocacao() {
-      const nomeBuscado = document.getElementById("buscarColocacao").value.trim();
-      const caixa = document.getElementById("resultadoColocacao");
-
-      if (!nomeBuscado) {
-        caixa.style.display = "block";
-        caixa.innerHTML = "Digite seu nome para localizar sua colocação.";
-        nomeDestacado = "";
-        renderizarLista(dadosFiltrados.length ? dadosFiltrados : dadosOriginais);
-        return;
-      }
-
-      const listaAtual = dadosFiltrados.length
-        ? dadosFiltrados
-        : [...dadosOriginais].sort((a, b) => obterClassificacao(a) - obterClassificacao(b));
-
-      const indice = listaAtual.findIndex(item =>
-        normalizarTexto(item.Nome).includes(normalizarTexto(nomeBuscado))
-      );
-
-      if (indice === -1) {
-        caixa.style.display = "block";
-        caixa.innerHTML = "Nome não encontrado na lista exibida.";
-        nomeDestacado = "";
-        renderizarLista(listaAtual);
-        return;
-      }
-
-      const pessoa = listaAtual[indice];
-      nomeDestacado = pessoa.Nome || "";
-
-      caixa.style.display = "block";
-      caixa.innerHTML = `
-        <strong>Nome:</strong> ${pessoa.Nome || ""}<br>
-        <strong>Cargo:</strong> ${pessoa.Cargo || ""}<br>
-        <strong>Posição na lista exibida:</strong> ${indice + 1}<br>
-        <strong>Classificação Geral:</strong> ${obterClassificacao(pessoa) !== 999999 ? obterClassificacao(pessoa) : ""}<br>
-        <strong>Cota Negro:</strong> ${obterCotaNegro(pessoa) || ""}
-      `;
-
-      renderizarLista(listaAtual);
-    }
-
-    fetch(ARQUIVO_EXCEL)
-      .then(response => response.arrayBuffer())
-      .then(data => {
-        const workbook = XLSX.read(data, { type: "array" });
-        const primeiraAba = workbook.Sheets[workbook.SheetNames[0]];
-        const json = XLSX.utils.sheet_to_json(primeiraAba, { defval: "" });
-
-        dadosOriginais = json.sort((a, b) => obterClassificacao(a) - obterClassificacao(b));
-        dadosFiltrados = [...dadosOriginais];
-
-        preencherCargos();
-        renderizarLista(dadosFiltrados);
-      })
-      .catch(error => {
-        document.getElementById("loadingMsg").style.display = "none";
-        document.getElementById("listaResultados").innerHTML = `
-          <div class="vazio">
-            Erro ao carregar o Excel. Verifique se o arquivo
-            <strong>resultado_extraido_atualizado.xlsx</strong>
-            está no mesmo repositório do index.html.
-          </div>
-        `;
-        atualizarStatus("Erro ao carregar dados");
-        console.error(error);
-      });
-  </script>
 </body>
 </html>
