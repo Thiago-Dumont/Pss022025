@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Agente de Educação Infantil</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #eef2f7;
+      color: #222;
+    }
+
+    .container {
+      max-width: 700px;
+      margin: auto;
+      padding: 16px;
+    }
+
+    .topo {
+      background: linear-gradient(135deg, #16a34a, #22c55e);
+      color: white;
+      padding: 20px;
+      border-radius: 18px;
+      text-align: center;
+      margin-bottom: 16px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+    }
+
+    .topo h1 {
+      margin: 0;
+      font-size: 24px;
+    }
+
+    .topo p {
+      margin: 6px 0 0;
+      font-size: 14px;
+    }
+
+    .card {
+      background: white;
+      padding: 14px;
+      border-radius: 16px;
+      margin-bottom: 12px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.05);
+    }
+
+    input {
+      width: 100%;
+      padding: 14px;
+      border-radius: 12px;
+      border: 1px solid #ccc;
+      font-size: 15px;
+      margin-bottom: 10px;
+      box-sizing: border-box;
+      background: #fff;
+    }
+
+    button, .btn-voltar {
+      width: 100%;
+      padding: 14px;
+      border-radius: 12px;
+      border: none;
+      background: #16a34a;
+      color: white;
+      font-weight: bold;
+      font-size: 15px;
+      cursor: pointer;
+      text-decoration: none;
+      display: block;
+      text-align: center;
+      box-sizing: border-box;
+    }
+
+    .btn-voltar {
+      background: #2563eb;
+      margin-top: 10px;
+    }
+
+    .resultado {
+      display: grid;
+      gap: 10px;
+    }
+
+    .item {
+      background: white;
+      border-radius: 16px;
+      padding: 14px;
+      border: 1px solid #ddd;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.04);
+    }
+
+    .nome {
+      font-weight: bold;
+      font-size: 16px;
+      margin-bottom: 4px;
+    }
+
+    .cargo {
+      font-size: 13px;
+      color: #666;
+      margin-bottom: 8px;
+    }
+
+    .info {
+      font-size: 14px;
+      margin-bottom: 4px;
+    }
+
+    .msg {
+      text-align: center;
+      color: #666;
+      margin-top: 10px;
+      font-size: 14px;
+    }
+
+    .erro {
+      color: #b91c1c;
+      font-weight: bold;
+    }
+
+    .modal-bg {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      padding: 16px;
+      box-sizing: border-box;
+    }
+
+    .modal {
+      background: white;
+      padding: 20px;
+      border-radius: 16px;
+      text-align: center;
+      max-width: 320px;
+      width: 100%;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+
+    .pix {
+      font-size: 20px;
+      font-weight: bold;
+      color: green;
+      margin: 12px 0;
+      word-break: break-word;
+    }
+
+    .btn-secundario {
+      margin-top: 8px;
+      background: #16a34a;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="modal-bg" id="modal">
+    <div class="modal">
+      <h3>Apoie este projeto</h3>
+      <p>Se te ajudou, envie um PIX:</p>
+      <div class="pix" id="chavePix">31 99617-4800</div>
+      <button class="btn-secundario" onclick="copiarPix()">Copiar chave PIX</button>
+      <button style="margin-top:8px;" onclick="fechar()">Entrar</button>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="topo">
+      <h1>Agente de Educação Infantil</h1>
+      <p>PSS 02 2025</p>
+    </div>
+
+    <div class="card">
+      <input type="text" id="nome" placeholder="Digite seu nome aqui" />
+      <button onclick="buscar()">Pesquisar</button>
+      <a class="btn-voltar" href="index.html">Voltar para a página inicial</a>
+      <div id="msg" class="msg"></div>
+    </div>
+
+    <div id="resultado" class="resultado"></div>
+  </div>
+
+  <script>
+    const arquivo = "classificacao_pss_medio_refinado.xlsx";
+    const cargoFixo = "Agente de Educação Infantil";
+    let dados = [];
+
+    function fechar() {
+      document.getElementById("modal").style.display = "none";
+    }
+
+    function abrir() {
+      document.getElementById("modal").style.display = "flex";
+    }
+
+    function copiarPix() {
+      const chave = document.getElementById("chavePix").innerText;
+      navigator.clipboard.writeText(chave).then(() => {
+        alert("Chave PIX copiada: " + chave);
+      }).catch(() => {
+        alert("Não foi possível copiar automaticamente. Chave PIX: " + chave);
+      });
+    }
+
+    function normalizar(texto) {
+      return String(texto || "")
+        .trim()
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "");
+    }
+
+    function limparTexto(texto) {
+      return String(texto || "").trim();
+    }
+
+    function encontrarColuna(obj, possiveisNomes) {
+      const chaves = Object.keys(obj || {});
+      for (const nome of possiveisNomes) {
+        const nomeNormalizado = normalizar(nome);
+        const chaveEncontrada = chaves.find(c => normalizar(c) === nomeNormalizado);
+        if (chaveEncontrada) return chaveEncontrada;
+      }
+      return null;
+    }
+
+    function transformarLinha(linhaOriginal) {
+      const colNome = encontrarColuna(linhaOriginal, ["Nome"]);
+      const colCargo = encontrarColuna(linhaOriginal, ["Cargo"]);
+      const colClassificacao = encontrarColuna(linhaOriginal, [
+        "Classificação",
+        "Classificacao",
+        "Classificação Geral",
+        "Classificacao Geral"
+      ]);
+      const colCotaNegro = encontrarColuna(linhaOriginal, [
+        "Classificação Cota Negro",
+        "Classificacao Cota Negro",
+        "RESERVA DE VAGAS AUTODECLARADOS PRETOS OU PARDOS"
+      ]);
+      const colPcd = encontrarColuna(linhaOriginal, [
+        "RESERVA DE VAGAS PESSOA COM DEFICIÊNCIA",
+        "RESERVA DE VAGAS PESSOA COM DEFICIENCIA",
+        "PcD",
+        "PCD"
+      ]);
+
+      return {
+        Nome: limparTexto(colNome ? linhaOriginal[colNome] : ""),
+        Cargo: limparTexto(colCargo ? linhaOriginal[colCargo] : ""),
+        Classificacao: limparTexto(colClassificacao ? linhaOriginal[colClassificacao] : ""),
+        CotaNegro: limparTexto(colCotaNegro ? linhaOriginal[colCotaNegro] : ""),
+        PCD: limparTexto(colPcd ? linhaOriginal[colPcd] : "")
+      };
+    }
+
+    function buscar() {
+      abrir();
+
+      const nomeDigitado = normalizar(document.getElementById("nome").value);
+      const div = document.getElementById("resultado");
+      const msg = document.getElementById("msg");
+
+      div.innerHTML = "";
+      msg.innerHTML = "";
+
+      let resultado = [...dados];
+
+      if (nomeDigitado) {
+        resultado = resultado.filter(p => normalizar(p.Nome).includes(nomeDigitado));
+      }
+
+      if (resultado.length === 0) {
+        msg.innerHTML = "Nenhum resultado encontrado.";
+        return;
+      }
+
+      resultado.forEach(p => {
+        div.innerHTML += `
+          <div class="item">
+            <div class="nome">${p.Nome || "-"}</div>
+            <div class="cargo">${p.Cargo || ""}</div>
+            <div class="info"><strong>Classificação:</strong> ${p.Classificacao || "-"}</div>
+            <div class="info"><strong>Cota Negro:</strong> ${p.CotaNegro || "-"}</div>
+            <div class="info"><strong>PCD:</strong> ${p.PCD || "-"}</div>
+          </div>
+        `;
+      });
+
+      msg.innerHTML = `${resultado.length} resultado(s) encontrado(s).`;
+    }
+
+    async function carregarExcel() {
+      const msg = document.getElementById("msg");
+
+      try {
+        const resposta = await fetch(arquivo);
+
+        if (!resposta.ok) {
+          throw new Error("Arquivo não encontrado: " + arquivo);
+        }
+
+        const data = await resposta.arrayBuffer();
+        const wb = XLSX.read(data, { type: "array" });
+
+        if (!wb.SheetNames || wb.SheetNames.length === 0) {
+          throw new Error("O Excel não possui abas.");
+        }
+
+        const ws = wb.Sheets[wb.SheetNames[0]];
+        const bruto = XLSX.utils.sheet_to_json(ws, { defval: "" });
+
+        dados = bruto
+          .map(transformarLinha)
+          .filter(item =>
+            item.Nome !== "" &&
+            normalizar(item.Cargo) === normalizar(cargoFixo)
+          );
+
+        if (dados.length === 0) {
+          throw new Error("Nenhum dado do cargo Agente de Educação Infantil foi encontrado.");
+        }
+
+        msg.innerHTML = "Arquivo carregado com sucesso.";
+      } catch (erro) {
+        console.error(erro);
+        msg.innerHTML = `<span class="erro">Erro ao carregar o Excel: ${erro.message}</span>`;
+      }
+    }
+
+    carregarExcel();
+  </script>
+</body>
+</html>
