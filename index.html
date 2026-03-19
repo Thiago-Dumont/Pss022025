@@ -67,7 +67,7 @@
       background: #fff;
     }
 
-    button {
+    button, .btn-link {
       width: 100%;
       padding: 14px;
       border-radius: 12px;
@@ -77,9 +77,13 @@
       font-weight: bold;
       font-size: 15px;
       cursor: pointer;
+      text-decoration: none;
+      display: block;
+      box-sizing: border-box;
+      text-align: center;
     }
 
-    button:active {
+    button:active, .btn-link:active {
       transform: scale(0.99);
     }
 
@@ -164,12 +168,30 @@
       margin-top: 8px;
       background: #16a34a;
     }
+
+    .link-card {
+      background: white;
+      padding: 16px;
+      border-radius: 16px;
+      margin-bottom: 12px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.05);
+    }
+
+    .link-card h3 {
+      margin: 0 0 8px;
+      font-size: 18px;
+    }
+
+    .link-card p {
+      margin: 0 0 12px;
+      color: #555;
+      font-size: 14px;
+    }
   </style>
 </head>
 
 <body>
 
-  <!-- POPUP PIX -->
   <div class="modal-bg" id="modal">
     <div class="modal">
       <h3>Apoie este projeto</h3>
@@ -186,6 +208,12 @@
       <h1>PSS 02 2025</h1>
       <p>Nível Superior</p>
       <p id="tituloCargos"></p>
+    </div>
+
+    <div class="link-card">
+      <h3>Agente de Educação Infantil</h3>
+      <p>Clique abaixo para abrir a página específica desse cargo.</p>
+      <a class="btn-link" href="agente-educacao-infantil.html">Abrir página do cargo</a>
     </div>
 
     <div class="card">
