@@ -3,321 +3,393 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>PSS 02 2025 - Nível Médio</title>
+  <title>PSS 02 2025</title>
 
   <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
 
   <style>
-    * {
-      box-sizing: border-box;
-    }
-
     body {
       margin: 0;
       font-family: Arial, sans-serif;
       background: #eef2f7;
-      color: #1f2937;
+      color: #222;
     }
 
     .container {
-      max-width: 760px;
-      margin: 0 auto;
+      max-width: 700px;
+      margin: auto;
       padding: 16px;
     }
 
     .topo {
       background: linear-gradient(135deg, #2563eb, #3b82f6);
-      color: #fff;
-      padding: 22px 18px;
+      color: white;
+      padding: 20px;
       border-radius: 18px;
       text-align: center;
       margin-bottom: 16px;
-      box-shadow: 0 6px 18px rgba(37, 99, 235, 0.18);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.08);
     }
 
     .topo h1 {
       margin: 0;
-      font-size: 25px;
+      font-size: 26px;
     }
 
     .topo p {
-      margin: 8px 0 0;
-      font-size: 14px;
+      margin: 6px 0 0;
+      font-size: 13px;
+    }
+
+    #tituloCargos {
+      font-size: 12px;
+      margin-top: 8px;
       opacity: 0.95;
+      line-height: 1.5;
     }
 
     .card {
-      background: #fff;
-      padding: 16px;
+      background: white;
+      padding: 14px;
       border-radius: 16px;
-      margin-bottom: 14px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      margin-bottom: 12px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.05);
     }
 
-    .card h2 {
-      margin: 0 0 12px;
-      font-size: 18px;
-      color: #1d4ed8;
+    input, select {
+      width: 100%;
+      padding: 14px;
+      border-radius: 12px;
+      border: 1px solid #ccc;
+      font-size: 15px;
+      margin-bottom: 10px;
+      box-sizing: border-box;
+      background: #fff;
     }
 
-    .lista-cargos {
+    button {
+      width: 100%;
+      padding: 14px;
+      border-radius: 12px;
+      border: none;
+      background: #2563eb;
+      color: white;
+      font-weight: bold;
+      font-size: 15px;
+      cursor: pointer;
+    }
+
+    button:active {
+      transform: scale(0.99);
+    }
+
+    .resultado {
       display: grid;
       gap: 10px;
     }
 
-    .cargo-item {
-      background: #f8fbff;
-      border: 1px solid #dbeafe;
-      border-radius: 14px;
+    .item {
+      background: white;
+      border-radius: 16px;
       padding: 14px;
+      border: 1px solid #ddd;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.04);
     }
 
-    .cargo-nome {
+    .item.destaque {
+      border: 2px solid #2563eb;
+      background: #f0f6ff;
+    }
+
+    .nome {
       font-weight: bold;
-      font-size: 15px;
-      margin-bottom: 6px;
+      font-size: 16px;
+      margin-bottom: 4px;
     }
 
-    .cargo-link {
-      color: #2563eb;
-      font-weight: bold;
-      text-decoration: none;
-    }
-
-    .cargo-link:hover {
-      text-decoration: underline;
-    }
-
-    .info-arquivo {
+    .cargo {
       font-size: 13px;
-      color: #6b7280;
-      text-align: center;
-      margin-top: 8px;
+      color: #666;
+      margin-bottom: 8px;
+    }
+
+    .info {
+      font-size: 14px;
+      margin-bottom: 4px;
     }
 
     .msg {
       text-align: center;
-      color: #6b7280;
+      color: #666;
+      margin-top: 10px;
       font-size: 14px;
-      padding: 10px 0;
+    }
+
+    .erro {
+      color: #b91c1c;
+      font-weight: bold;
     }
 
     .modal-bg {
       position: fixed;
       inset: 0;
-      background: rgba(0,0,0,0.72);
+      background: rgba(0,0,0,0.7);
       display: flex;
       align-items: center;
       justify-content: center;
       z-index: 9999;
       padding: 16px;
+      box-sizing: border-box;
     }
 
     .modal {
-      background: #fff;
-      width: 100%;
-      max-width: 340px;
-      border-radius: 18px;
-      padding: 22px 18px;
+      background: white;
+      padding: 20px;
+      border-radius: 16px;
       text-align: center;
-      box-shadow: 0 12px 30px rgba(0,0,0,0.22);
-    }
-
-    .modal h3 {
-      margin: 0 0 10px;
-      font-size: 22px;
-      color: #1d4ed8;
-    }
-
-    .modal p {
-      margin: 0 0 10px;
-      font-size: 14px;
-      color: #374151;
+      max-width: 320px;
+      width: 100%;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
     }
 
     .pix {
-      font-size: 22px;
+      font-size: 20px;
       font-weight: bold;
-      color: #15803d;
-      margin: 14px 0;
+      color: green;
+      margin: 12px 0;
       word-break: break-word;
     }
 
-    .botoes-modal {
-      display: grid;
-      gap: 10px;
-      margin-top: 12px;
-    }
-
-    button {
-      width: 100%;
-      padding: 13px;
-      border: none;
-      border-radius: 12px;
-      font-size: 15px;
-      font-weight: bold;
-      cursor: pointer;
-    }
-
-    .btn-primario {
-      background: #2563eb;
-      color: #fff;
-    }
-
     .btn-secundario {
-      background: #ecfdf5;
-      color: #166534;
-      border: 1px solid #bbf7d0;
-    }
-
-    .rodape {
-      text-align: center;
-      font-size: 12px;
-      color: #6b7280;
-      margin-top: 18px;
-      padding-bottom: 10px;
+      margin-top: 8px;
+      background: #16a34a;
     }
   </style>
 </head>
+
 <body>
 
   <!-- POPUP PIX -->
   <div class="modal-bg" id="modal">
     <div class="modal">
       <h3>Apoie este projeto</h3>
-      <p>Se este trabalho te ajudou, contribua via PIX:</p>
-      <div class="pix" id="pixChave">31 99617-4800</div>
-
-      <div class="botoes-modal">
-        <button class="btn-secundario" onclick="copiarPix()">Copiar chave PIX</button>
-        <button class="btn-primario" onclick="fecharModal()">Entrar</button>
-      </div>
+      <p>Se te ajudou, envie um PIX:</p>
+      <div class="pix" id="chavePix">31 99617-4800</div>
+      <button class="btn-secundario" onclick="copiarPix()">Copiar chave PIX</button>
+      <button style="margin-top:8px;" onclick="fechar()">Entrar</button>
     </div>
   </div>
 
   <div class="container">
+
     <div class="topo">
-      <h1>Classificação PSS 02 2025</h1>
-      <p>Nível Médio</p>
-      <p>Selecione o cargo para abrir a próxima página</p>
+      <h1>PSS 02 2025</h1>
+      <p>Nível Superior</p>
+      <p id="tituloCargos"></p>
     </div>
 
     <div class="card">
-      <h2>Cargos disponíveis</h2>
-      <div id="listaCargos" class="lista-cargos"></div>
-      <div id="msg" class="msg">Carregando cargos...</div>
-      <div class="info-arquivo">Arquivo: classificacao_pss_medio_refinado.xlsx</div>
+      <input type="text" id="nome" placeholder="Coloque seu nome aqui" />
+
+      <select id="cargo">
+        <option value="">Todos os cargos</option>
+      </select>
+
+      <button onclick="buscar()">Pesquisar</button>
+
+      <div id="msg" class="msg"></div>
     </div>
 
-    <div class="rodape">
-      Elaborado por Data Ápice
-    </div>
+    <div id="resultado" class="resultado"></div>
   </div>
 
   <script>
-    const arquivo = "classificacao_pss_medio_refinado.xlsx";
-    const chavePix = "31 99617-4800";
+    const arquivo = "resultado_extraido_atualizado.xlsx";
     let dados = [];
 
-    function fecharModal() {
+    function fechar() {
       document.getElementById("modal").style.display = "none";
     }
 
-    function abrirModal() {
+    function abrir() {
       document.getElementById("modal").style.display = "flex";
     }
 
-    async function copiarPix() {
-      try {
-        await navigator.clipboard.writeText(chavePix);
-        alert("Chave PIX copiada: " + chavePix);
-      } catch (e) {
-        alert("Não foi possível copiar automaticamente. Chave PIX: " + chavePix);
-      }
+    function copiarPix() {
+      const chave = document.getElementById("chavePix").innerText;
+      navigator.clipboard.writeText(chave).then(() => {
+        alert("Chave PIX copiada: " + chave);
+      }).catch(() => {
+        alert("Não foi possível copiar automaticamente. Chave PIX: " + chave);
+      });
     }
 
     function normalizar(texto) {
-      return (texto || "")
-        .toString()
-        .trim();
-    }
-
-    function gerarSlugCargo(cargo) {
-      return normalizar(cargo)
+      return String(texto || "")
+        .trim()
         .toLowerCase()
         .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "")
-        .replace(/[^a-z0-9]+/g, "-")
-        .replace(/^-+|-+$/g, "");
+        .replace(/[\u0300-\u036f]/g, "");
     }
 
-    function abrirPaginaCargo(cargo) {
-      abrirModal();
-
-      const slug = gerarSlugCargo(cargo);
-
-      setTimeout(() => {
-        window.location.href = `cargo.html?cargo=${encodeURIComponent(cargo)}&slug=${encodeURIComponent(slug)}`;
-      }, 300);
+    function limparTexto(texto) {
+      return String(texto || "").trim();
     }
 
-    function renderizarCargos() {
-      const lista = document.getElementById("listaCargos");
-      const msg = document.getElementById("msg");
+    function encontrarColuna(obj, possiveisNomes) {
+      const chaves = Object.keys(obj || {});
+      for (const nome of possiveisNomes) {
+        const nomeNormalizado = normalizar(nome);
+        const chaveEncontrada = chaves.find(c => normalizar(c) === nomeNormalizado);
+        if (chaveEncontrada) return chaveEncontrada;
+      }
+      return null;
+    }
 
-      lista.innerHTML = "";
+    function transformarLinha(linhaOriginal) {
+      const colNome = encontrarColuna(linhaOriginal, ["Nome"]);
+      const colCargo = encontrarColuna(linhaOriginal, ["Cargo"]);
+      const colClassificacao = encontrarColuna(linhaOriginal, [
+        "Classificação",
+        "Classificacao",
+        "Classificação Geral",
+        "Classificacao Geral"
+      ]);
+      const colCotaNegro = encontrarColuna(linhaOriginal, [
+        "Classificação Cota Negro",
+        "Classificacao Cota Negro",
+        "RESERVA DE VAGAS AUTODECLARADOS PRETOS OU PARDOS"
+      ]);
+      const colPcd = encontrarColuna(linhaOriginal, [
+        "RESERVA DE VAGAS PESSOA COM DEFICIÊNCIA",
+        "RESERVA DE VAGAS PESSOA COM DEFICIENCIA",
+        "PcD",
+        "PCD"
+      ]);
+
+      return {
+        Nome: limparTexto(colNome ? linhaOriginal[colNome] : ""),
+        Cargo: limparTexto(colCargo ? linhaOriginal[colCargo] : ""),
+        Classificacao: limparTexto(colClassificacao ? linhaOriginal[colClassificacao] : ""),
+        CotaNegro: limparTexto(colCotaNegro ? linhaOriginal[colCotaNegro] : ""),
+        PCD: limparTexto(colPcd ? linhaOriginal[colPcd] : "")
+      };
+    }
+
+    function preencherCargos() {
+      const select = document.getElementById("cargo");
+      select.innerHTML = '<option value="">Todos os cargos</option>';
 
       const cargos = [...new Set(
         dados
-          .map(item => normalizar(item.Cargo))
-          .filter(Boolean)
+          .map(d => limparTexto(d.Cargo))
+          .filter(c => c !== "")
       )].sort((a, b) => a.localeCompare(b, "pt-BR"));
 
-      if (!cargos.length) {
-        msg.textContent = "Nenhum cargo encontrado no arquivo.";
-        return;
-      }
-
-      msg.textContent = "";
-
       cargos.forEach(cargo => {
-        const div = document.createElement("div");
-        div.className = "cargo-item";
-
-        div.innerHTML = `
-          <div class="cargo-nome">${cargo}</div>
-          <a href="#" class="cargo-link" data-cargo="${cargo}">Clique aqui</a>
-        `;
-
-        lista.appendChild(div);
-      });
-
-      document.querySelectorAll(".cargo-link").forEach(link => {
-        link.addEventListener("click", function(e) {
-          e.preventDefault();
-          const cargo = this.getAttribute("data-cargo");
-          abrirPaginaCargo(cargo);
-        });
+        const opt = document.createElement("option");
+        opt.value = cargo;
+        opt.textContent = cargo;
+        select.appendChild(opt);
       });
     }
 
-    fetch(arquivo)
-      .then(resp => {
-        if (!resp.ok) {
-          throw new Error("Arquivo não encontrado.");
-        }
-        return resp.arrayBuffer();
-      })
-      .then(arrayBuffer => {
-        const workbook = XLSX.read(arrayBuffer, { type: "array" });
-        const sheet = workbook.Sheets[workbook.SheetNames[0]];
-        dados = XLSX.utils.sheet_to_json(sheet, { defval: "" });
-        renderizarCargos();
-      })
-      .catch(() => {
-        document.getElementById("msg").textContent =
-          "Erro ao carregar o arquivo Excel. Verifique se o arquivo classificacao_pss_medio_refinado.xlsx está na mesma pasta do index.html.";
+    function mostrarCargosNoTitulo() {
+      const cargos = [...new Set(
+        dados
+          .map(d => limparTexto(d.Cargo))
+          .filter(c => c !== "")
+      )].sort((a, b) => a.localeCompare(b, "pt-BR"));
+
+      let texto = cargos.join(" • ");
+      if (texto.length > 180) {
+        texto = texto.substring(0, 180) + "...";
+      }
+
+      document.getElementById("tituloCargos").innerText = texto || "Cargos não encontrados no arquivo.";
+    }
+
+    function buscar() {
+      abrir();
+
+      const nomeDigitado = normalizar(document.getElementById("nome").value);
+      const cargoSelecionado = limparTexto(document.getElementById("cargo").value);
+
+      const div = document.getElementById("resultado");
+      const msg = document.getElementById("msg");
+
+      div.innerHTML = "";
+      msg.innerHTML = "";
+
+      let resultado = [...dados];
+
+      if (nomeDigitado) {
+        resultado = resultado.filter(p => normalizar(p.Nome).includes(nomeDigitado));
+      }
+
+      if (cargoSelecionado) {
+        resultado = resultado.filter(p => limparTexto(p.Cargo) === cargoSelecionado);
+      }
+
+      if (resultado.length === 0) {
+        msg.innerHTML = "Nenhum resultado encontrado.";
+        return;
+      }
+
+      resultado.forEach(p => {
+        div.innerHTML += `
+          <div class="item destaque">
+            <div class="nome">${p.Nome || "-"}</div>
+            <div class="cargo">${p.Cargo || ""}</div>
+            <div class="info"><strong>Classificação:</strong> ${p.Classificacao || "-"}</div>
+            <div class="info"><strong>Cota Negro:</strong> ${p.CotaNegro || "-"}</div>
+            <div class="info"><strong>PCD:</strong> ${p.PCD || "-"}</div>
+          </div>
+        `;
       });
+
+      msg.innerHTML = `${resultado.length} resultado(s) encontrado(s).`;
+    }
+
+    async function carregarExcel() {
+      const msg = document.getElementById("msg");
+
+      try {
+        const resposta = await fetch(arquivo);
+
+        if (!resposta.ok) {
+          throw new Error("Arquivo não encontrado: " + arquivo);
+        }
+
+        const data = await resposta.arrayBuffer();
+        const wb = XLSX.read(data, { type: "array" });
+
+        if (!wb.SheetNames || wb.SheetNames.length === 0) {
+          throw new Error("O Excel não possui abas.");
+        }
+
+        const ws = wb.Sheets[wb.SheetNames[0]];
+        const bruto = XLSX.utils.sheet_to_json(ws, { defval: "" });
+
+        dados = bruto
+          .map(transformarLinha)
+          .filter(item => item.Nome !== "");
+
+        if (dados.length === 0) {
+          throw new Error("Nenhum dado válido foi encontrado na primeira aba.");
+        }
+
+        preencherCargos();
+        mostrarCargosNoTitulo();
+        msg.innerHTML = "Arquivo carregado com sucesso.";
+      } catch (erro) {
+        console.error(erro);
+        msg.innerHTML = `<span class="erro">Erro ao carregar o Excel: ${erro.message}</span>`;
+      }
+    }
+
+    carregarExcel();
   </script>
+
 </body>
 </html>
