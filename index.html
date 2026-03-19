@@ -10,9 +10,8 @@
   <style>
     body {
       margin: 0;
-      font-family: Arial, sans-serif;
+      font-family: Arial;
       background: #eef2f7;
-      color: #111;
     }
 
     .container {
@@ -32,12 +31,12 @@
 
     .topo h1 {
       margin: 0;
-      font-size: 26px;
+      font-size: 24px;
     }
 
     .topo p {
-      margin: 6px 0 0;
-      font-size: 14px;
+      margin: 5px 0 0;
+      font-size: 13px;
       opacity: 0.9;
     }
 
@@ -46,7 +45,6 @@
       padding: 14px;
       border-radius: 16px;
       margin-bottom: 12px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.06);
     }
 
     input, select {
@@ -65,50 +63,40 @@
       border: none;
       background: #2563eb;
       color: white;
-      font-size: 15px;
       font-weight: bold;
-      cursor: pointer;
+      font-size: 15px;
     }
 
     .resultado {
       display: grid;
       gap: 10px;
-      margin-top: 10px;
     }
 
     .item {
       background: white;
       border-radius: 16px;
       padding: 14px;
-      border: 1px solid #e5e7eb;
-    }
-
-    .item.destaque {
-      border: 2px solid #2563eb;
-      background: #f0f6ff;
+      border: 1px solid #ddd;
     }
 
     .nome {
-      font-size: 16px;
       font-weight: bold;
     }
 
     .cargo {
       font-size: 13px;
       color: #666;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
     }
 
     .info {
       font-size: 14px;
-      margin-top: 3px;
     }
 
     .msg {
       text-align: center;
       margin-top: 10px;
       color: #666;
-      font-size: 14px;
     }
 
     .modal-bg {
@@ -118,6 +106,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      z-index: 999;
     }
 
     .modal {
@@ -151,18 +140,18 @@
 <div class="container">
 
   <div class="topo">
-    <h1>PSS 02 2025</h1>
+    <h1>PSS 02 2025 - TODOS OS CARGOS</h1>
     <p>Nível Superior</p>
   </div>
 
   <div class="card">
     <input type="text" id="nome" placeholder="Coloque seu nome aqui">
-    
+
     <select id="cargo">
       <option value="">Todos os cargos</option>
     </select>
 
-    <button onclick="buscar()">Buscar</button>
+    <button onclick="buscar()">Pesquisar</button>
 
     <div id="msg" class="msg"></div>
   </div>
@@ -177,6 +166,10 @@ let dados = [];
 
 function fechar(){
   document.getElementById("modal").style.display = "none";
+}
+
+function abrirModal(){
+  document.getElementById("modal").style.display = "flex";
 }
 
 function normalizar(texto){
@@ -212,6 +205,9 @@ function preencherCargos(){
 }
 
 function buscar(){
+
+  abrirModal(); // 🔥 MOSTRA PIX NOVAMENTE
+
   const nome = normalizar(document.getElementById("nome").value);
   const cargo = document.getElementById("cargo").value;
 
@@ -242,7 +238,7 @@ function buscar(){
 
   resultado.forEach(p => {
     div.innerHTML += `
-      <div class="item destaque">
+      <div class="item">
         <div class="nome">${p.Nome}</div>
         <div class="cargo">${p.Cargo || ""}</div>
         <div class="info">Classificação: ${getClassificacao(p)}</div>
