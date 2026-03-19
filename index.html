@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Agente de Educação Infantil</title>
+  <title>PSS 02 2025</title>
 
   <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
 
@@ -22,7 +22,7 @@
     }
 
     .topo {
-      background: linear-gradient(135deg, #16a34a, #22c55e);
+      background: linear-gradient(135deg, #2563eb, #3b82f6);
       color: white;
       padding: 20px;
       border-radius: 18px;
@@ -33,12 +33,19 @@
 
     .topo h1 {
       margin: 0;
-      font-size: 24px;
+      font-size: 26px;
     }
 
     .topo p {
       margin: 6px 0 0;
-      font-size: 14px;
+      font-size: 13px;
+    }
+
+    #tituloCargos {
+      font-size: 12px;
+      margin-top: 8px;
+      opacity: 0.95;
+      line-height: 1.5;
     }
 
     .card {
@@ -49,7 +56,7 @@
       box-shadow: 0 6px 18px rgba(0,0,0,0.05);
     }
 
-    input {
+    input, select {
       width: 100%;
       padding: 14px;
       border-radius: 12px;
@@ -60,25 +67,20 @@
       background: #fff;
     }
 
-    button, .btn-voltar {
+    button {
       width: 100%;
       padding: 14px;
       border-radius: 12px;
       border: none;
-      background: #16a34a;
+      background: #2563eb;
       color: white;
       font-weight: bold;
       font-size: 15px;
       cursor: pointer;
-      text-decoration: none;
-      display: block;
-      text-align: center;
-      box-sizing: border-box;
     }
 
-    .btn-voltar {
-      background: #2563eb;
-      margin-top: 10px;
+    button:active {
+      transform: scale(0.99);
     }
 
     .resultado {
@@ -92,6 +94,11 @@
       padding: 14px;
       border: 1px solid #ddd;
       box-shadow: 0 6px 18px rgba(0,0,0,0.04);
+    }
+
+    .item.destaque {
+      border: 2px solid #2563eb;
+      background: #f0f6ff;
     }
 
     .nome {
@@ -159,8 +166,10 @@
     }
   </style>
 </head>
+
 <body>
 
+  <!-- POPUP PIX -->
   <div class="modal-bg" id="modal">
     <div class="modal">
       <h3>Apoie este projeto</h3>
@@ -172,15 +181,22 @@
   </div>
 
   <div class="container">
+
     <div class="topo">
-      <h1>Agente de Educação Infantil</h1>
-      <p>PSS 02 2025</p>
+      <h1>PSS 02 2025</h1>
+      <p>Nível Superior</p>
+      <p id="tituloCargos"></p>
     </div>
 
     <div class="card">
-      <input type="text" id="nome" placeholder="Digite seu nome aqui" />
+      <input type="text" id="nome" placeholder="Coloque seu nome aqui" />
+
+      <select id="cargo">
+        <option value="">Todos os cargos</option>
+      </select>
+
       <button onclick="buscar()">Pesquisar</button>
-      <a class="btn-voltar" href="index.html">Voltar para a página inicial</a>
+
       <div id="msg" class="msg"></div>
     </div>
 
@@ -188,8 +204,7 @@
   </div>
 
   <script>
-    const arquivo = "classificacao_pss_medio_refinado.xlsx";
-    const cargoFixo = "Agente de Educação Infantil";
+    const arquivo = "resultado_extraido_atualizado.xlsx";
     let dados = [];
 
     function fechar() {
@@ -261,10 +276,45 @@
       };
     }
 
+    function preencherCargos() {
+      const select = document.getElementById("cargo");
+      select.innerHTML = '<option value="">Todos os cargos</option>';
+
+      const cargos = [...new Set(
+        dados
+          .map(d => limparTexto(d.Cargo))
+          .filter(c => c !== "")
+      )].sort((a, b) => a.localeCompare(b, "pt-BR"));
+
+      cargos.forEach(cargo => {
+        const opt = document.createElement("option");
+        opt.value = cargo;
+        opt.textContent = cargo;
+        select.appendChild(opt);
+      });
+    }
+
+    function mostrarCargosNoTitulo() {
+      const cargos = [...new Set(
+        dados
+          .map(d => limparTexto(d.Cargo))
+          .filter(c => c !== "")
+      )].sort((a, b) => a.localeCompare(b, "pt-BR"));
+
+      let texto = cargos.join(" • ");
+      if (texto.length > 180) {
+        texto = texto.substring(0, 180) + "...";
+      }
+
+      document.getElementById("tituloCargos").innerText = texto || "Cargos não encontrados no arquivo.";
+    }
+
     function buscar() {
       abrir();
 
       const nomeDigitado = normalizar(document.getElementById("nome").value);
+      const cargoSelecionado = limparTexto(document.getElementById("cargo").value);
+
       const div = document.getElementById("resultado");
       const msg = document.getElementById("msg");
 
@@ -277,6 +327,10 @@
         resultado = resultado.filter(p => normalizar(p.Nome).includes(nomeDigitado));
       }
 
+      if (cargoSelecionado) {
+        resultado = resultado.filter(p => limparTexto(p.Cargo) === cargoSelecionado);
+      }
+
       if (resultado.length === 0) {
         msg.innerHTML = "Nenhum resultado encontrado.";
         return;
@@ -284,7 +338,7 @@
 
       resultado.forEach(p => {
         div.innerHTML += `
-          <div class="item">
+          <div class="item destaque">
             <div class="nome">${p.Nome || "-"}</div>
             <div class="cargo">${p.Cargo || ""}</div>
             <div class="info"><strong>Classificação:</strong> ${p.Classificacao || "-"}</div>
@@ -319,15 +373,14 @@
 
         dados = bruto
           .map(transformarLinha)
-          .filter(item =>
-            item.Nome !== "" &&
-            normalizar(item.Cargo) === normalizar(cargoFixo)
-          );
+          .filter(item => item.Nome !== "");
 
         if (dados.length === 0) {
-          throw new Error("Nenhum dado do cargo Agente de Educação Infantil foi encontrado.");
+          throw new Error("Nenhum dado válido foi encontrado na primeira aba.");
         }
 
+        preencherCargos();
+        mostrarCargosNoTitulo();
         msg.innerHTML = "Arquivo carregado com sucesso.";
       } catch (erro) {
         console.error(erro);
@@ -337,5 +390,6 @@
 
     carregarExcel();
   </script>
+
 </body>
 </html>
