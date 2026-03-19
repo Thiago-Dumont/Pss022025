@@ -1,133 +1,143 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PSS 02 2025</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PSS 02 2025</title>
 
-  <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
 
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial;
-      background: #eef2f7;
-    }
+<style>
+body {
+  margin: 0;
+  font-family: Arial;
+  background: #eef2f7;
+}
 
-    .container {
-      max-width: 700px;
-      margin: auto;
-      padding: 16px;
-    }
+.container {
+  max-width: 700px;
+  margin: auto;
+  padding: 16px;
+}
 
-    .topo {
-      background: linear-gradient(135deg, #2563eb, #3b82f6);
-      color: white;
-      padding: 20px;
-      border-radius: 18px;
-      text-align: center;
-      margin-bottom: 16px;
-    }
+.topo {
+  background: linear-gradient(135deg, #2563eb, #3b82f6);
+  color: white;
+  padding: 20px;
+  border-radius: 18px;
+  text-align: center;
+  margin-bottom: 16px;
+}
 
-    .topo h1 {
-      margin: 0;
-      font-size: 24px;
-    }
+.topo h1 {
+  margin: 0;
+  font-size: 26px;
+}
 
-    .topo p {
-      margin: 5px 0 0;
-      font-size: 13px;
-      opacity: 0.9;
-    }
+.topo p {
+  margin: 6px 0 0;
+  font-size: 13px;
+}
 
-    .card {
-      background: white;
-      padding: 14px;
-      border-radius: 16px;
-      margin-bottom: 12px;
-    }
+#tituloCargos {
+  font-size: 12px;
+  margin-top: 6px;
+  opacity: 0.9;
+}
 
-    input, select {
-      width: 100%;
-      padding: 14px;
-      border-radius: 12px;
-      border: 1px solid #ccc;
-      font-size: 15px;
-      margin-bottom: 10px;
-    }
+.card {
+  background: white;
+  padding: 14px;
+  border-radius: 16px;
+  margin-bottom: 12px;
+}
 
-    button {
-      width: 100%;
-      padding: 14px;
-      border-radius: 12px;
-      border: none;
-      background: #2563eb;
-      color: white;
-      font-weight: bold;
-      font-size: 15px;
-    }
+input, select {
+  width: 100%;
+  padding: 14px;
+  border-radius: 12px;
+  border: 1px solid #ccc;
+  font-size: 15px;
+  margin-bottom: 10px;
+}
 
-    .resultado {
-      display: grid;
-      gap: 10px;
-    }
+button {
+  width: 100%;
+  padding: 14px;
+  border-radius: 12px;
+  border: none;
+  background: #2563eb;
+  color: white;
+  font-weight: bold;
+  font-size: 15px;
+}
 
-    .item {
-      background: white;
-      border-radius: 16px;
-      padding: 14px;
-      border: 1px solid #ddd;
-    }
+.resultado {
+  display: grid;
+  gap: 10px;
+}
 
-    .nome {
-      font-weight: bold;
-    }
+.item {
+  background: white;
+  border-radius: 16px;
+  padding: 14px;
+  border: 1px solid #ddd;
+}
 
-    .cargo {
-      font-size: 13px;
-      color: #666;
-      margin-bottom: 6px;
-    }
+.item.destaque {
+  border: 2px solid #2563eb;
+  background: #f0f6ff;
+}
 
-    .info {
-      font-size: 14px;
-    }
+.nome {
+  font-weight: bold;
+}
 
-    .msg {
-      text-align: center;
-      margin-top: 10px;
-      color: #666;
-    }
+.cargo {
+  font-size: 13px;
+  color: #666;
+  margin-bottom: 6px;
+}
 
-    .modal-bg {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.7);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 999;
-    }
+.info {
+  font-size: 14px;
+}
 
-    .modal {
-      background: white;
-      padding: 20px;
-      border-radius: 16px;
-      text-align: center;
-      max-width: 300px;
-    }
+.msg {
+  text-align: center;
+  color: #666;
+  margin-top: 10px;
+}
 
-    .pix {
-      font-size: 20px;
-      font-weight: bold;
-      color: green;
-      margin: 10px 0;
-    }
-  </style>
+.modal-bg {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal {
+  background: white;
+  padding: 20px;
+  border-radius: 16px;
+  text-align: center;
+  max-width: 300px;
+}
+
+.pix {
+  font-size: 20px;
+  font-weight: bold;
+  color: green;
+  margin: 10px 0;
+}
+</style>
 </head>
 
 <body>
 
+<!-- POPUP PIX -->
 <div class="modal-bg" id="modal">
   <div class="modal">
     <h3>Apoie este projeto</h3>
@@ -139,11 +149,14 @@
 
 <div class="container">
 
+  <!-- TOPO -->
   <div class="topo">
-    <h1>PSS 02 2025 - TODOS OS CARGOS</h1>
+    <h1>PSS 02 2025</h1>
     <p>Nível Superior</p>
+    <p id="tituloCargos"></p>
   </div>
 
+  <!-- FILTROS -->
   <div class="card">
     <input type="text" id="nome" placeholder="Coloque seu nome aqui">
 
@@ -156,6 +169,7 @@
     <div id="msg" class="msg"></div>
   </div>
 
+  <!-- RESULTADOS -->
   <div id="resultado" class="resultado"></div>
 
 </div>
@@ -168,7 +182,7 @@ function fechar(){
   document.getElementById("modal").style.display = "none";
 }
 
-function abrirModal(){
+function abrir(){
   document.getElementById("modal").style.display = "flex";
 }
 
@@ -182,21 +196,21 @@ function normalizar(texto){
 function getClassificacao(item){
   return item.Classificacao ??
          item["Classificação"] ??
-         item["Classificação Geral"] ??
-         "";
+         item["Classificação Geral"] ?? "";
 }
 
 function getCota(item){
   return item.Classificacao_Cota_Negro ??
-         item["Classificação Cota Negro"] ??
-         "";
+         item["Classificação Cota Negro"] ?? "";
 }
 
 function preencherCargos(){
   const select = document.getElementById("cargo");
-  const cargos = [...new Set(dados.map(d => d.Cargo).filter(Boolean))];
 
-  cargos.sort().forEach(c => {
+  const cargos = [...new Set(dados.map(d => d.Cargo).filter(Boolean))];
+  cargos.sort();
+
+  cargos.forEach(c => {
     const opt = document.createElement("option");
     opt.value = c;
     opt.textContent = c;
@@ -204,9 +218,22 @@ function preencherCargos(){
   });
 }
 
+function mostrarCargosNoTitulo(){
+  const cargos = [...new Set(dados.map(d => d.Cargo).filter(Boolean))];
+  cargos.sort();
+
+  let texto = cargos.join(" • ");
+
+  if(texto.length > 120){
+    texto = texto.substring(0,120) + "...";
+  }
+
+  document.getElementById("tituloCargos").innerText = texto;
+}
+
 function buscar(){
 
-  abrirModal(); // 🔥 MOSTRA PIX NOVAMENTE
+  abrir(); // mostra PIX novamente
 
   const nome = normalizar(document.getElementById("nome").value);
   const cargo = document.getElementById("cargo").value;
@@ -238,7 +265,7 @@ function buscar(){
 
   resultado.forEach(p => {
     div.innerHTML += `
-      <div class="item">
+      <div class="item destaque">
         <div class="nome">${p.Nome}</div>
         <div class="cargo">${p.Cargo || ""}</div>
         <div class="info">Classificação: ${getClassificacao(p)}</div>
@@ -254,7 +281,9 @@ fetch(arquivo)
     const wb = XLSX.read(data, {type: "array"});
     const ws = wb.Sheets[wb.SheetNames[0]];
     dados = XLSX.utils.sheet_to_json(ws, {defval: ""});
+
     preencherCargos();
+    mostrarCargosNoTitulo();
   });
 </script>
 
