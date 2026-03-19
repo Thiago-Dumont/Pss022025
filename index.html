@@ -90,6 +90,15 @@
       box-sizing: border-box;
     }
 
+    .aviso-ir {
+      background: #fff7ed;
+      border-left: 5px solid #ea580c;
+    }
+
+    .aviso-ir h3 {
+      color: #9a3412;
+    }
+
     input, select {
       width: 100%;
       padding: 14px;
@@ -198,6 +207,11 @@
       margin-top: 8px;
       background: #16a34a;
     }
+
+    .btn-ir {
+      margin-top: 8px;
+      background: #ea580c;
+    }
   </style>
 </head>
 
@@ -214,12 +228,33 @@
     </div>
   </div>
 
+  <!-- NOVO POPUP IR -->
+  <div class="modal-bg" id="modalIR" style="display: none;">
+    <div class="modal">
+      <h3>⚠️ Prazo do Imposto de Renda MENOR esse ano!</h3>
+      <p>Não deixe pra última hora — evite multas e problemas com a Receita.</p>
+      <p><strong>Faço seu IR rápido, seguro e sem complicação!</strong></p>
+      <p>Chama no WhatsApp agora: <strong>31 98348-6936</strong></p>
+      <p>📲 <strong>@santosesoares.contabilidade</strong></p>
+      <button class="btn-ir" onclick="fecharIR()">Fechar</button>
+    </div>
+  </div>
+
   <div class="container">
 
     <div class="topo">
       <h1>PSS 02 2025</h1>
       <p>Nível Superior</p>
       <p id="tituloCargos"></p>
+    </div>
+
+    <!-- AVISO NO SITE SOBRE IR -->
+    <div class="link-card aviso-ir">
+      <h3>⚠️ Imposto de Renda 2026</h3>
+      <p>Prazo do Imposto de Renda menor esse ano.</p>
+      <p>Não deixe pra última hora — evite multas e problemas com a Receita.</p>
+      <p><strong>Faço seu IR rápido, seguro e sem complicação!</strong></p>
+      <p>WhatsApp: <strong>31 98348-6936</strong><br>📲 <strong>@santosesoares.contabilidade</strong></p>
     </div>
 
     <!-- LINK PARA AGENTE DE EDUCAÇÃO INFANTIL -->
@@ -250,10 +285,15 @@
 
     function fechar() {
       document.getElementById("modal").style.display = "none";
+      document.getElementById("modalIR").style.display = "flex";
     }
 
     function abrir() {
       document.getElementById("modal").style.display = "flex";
+    }
+
+    function fecharIR() {
+      document.getElementById("modalIR").style.display = "none";
     }
 
     function copiarPix() {
