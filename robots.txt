@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://thiago-dumont.github.io/Pss022025/sitemap.xml
+
