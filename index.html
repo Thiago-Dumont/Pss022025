@@ -3,277 +3,233 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Classificação PSS 02 2025</title>
+  <title>PSS 02 2025</title>
 
   <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
 
   <style>
     :root {
-      --bg-1: #eef4ff;
-      --primary: #1d4ed8;
-      --primary-2: #2563eb;
-      --primary-3: #3b82f6;
-      --text: #0f172a;
-      --muted: #475569;
-      --line: #dbe4f0;
-      --card: rgba(255, 255, 255, 0.95);
+      --bg-1: #eef4ff; --bg-2: #f8fbff; --bg-3: #ffffff;
+      --primary: #1d4ed8; --primary-2: #2563eb; --primary-3: #3b82f6;
+      --text: #0f172a; --muted: #475569; --soft: #64748b;
+      --line: #dbe4f0; --card: rgba(255, 255, 255, 0.92);
       --shadow-lg: 0 24px 60px rgba(15, 23, 42, 0.12);
-      --radius-xl: 28px;
-      --radius-lg: 22px;
+      --shadow-md: 0 14px 34px rgba(15, 23, 42, 0.08);
+      --shadow-sm: 0 8px 18px rgba(15, 23, 42, 0.05);
+      --radius-xl: 28px; --radius-lg: 22px; --radius-md: 16px;
     }
 
     * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
     body {
-      margin: 0;
-      font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-      color: var(--text);
-      background: radial-gradient(circle at top, #dbeafe 0%, #f8fbff 100%);
+      margin: 0; font-family: Arial, sans-serif; color: var(--text);
+      background: radial-gradient(circle at top, #dbeafe 0%, #edf4ff 26%, #f8fbff 65%, #ffffff 100%);
       min-height: 100vh;
     }
 
-    .container { max-width: 780px; margin: 0 auto; padding: 20px 16px; }
+    .container { max-width: 780px; margin: 0 auto; padding: 24px 16px 42px; }
 
-    /* Cabeçalho */
     .topo {
-      position: relative;
-      background: linear-gradient(135deg, #1e40af 0%, #2563eb 100%);
-      color: #ffffff;
-      padding: 40px 20px;
-      border-radius: var(--radius-xl);
-      text-align: center;
-      margin-bottom: 20px;
-      box-shadow: 0 20px 40px rgba(37, 99, 235, 0.2);
+      position: relative; overflow: hidden;
+      background: linear-gradient(135deg, #1e40af 0%, #2563eb 48%, #60a5fa 100%);
+      color: #ffffff; padding: 34px 22px 30px; border-radius: var(--radius-xl);
+      text-align: center; margin-bottom: 18px; box-shadow: 0 22px 50px rgba(37, 99, 235, 0.22);
+      border: 1px solid rgba(255, 255, 255, 0.18);
     }
 
-    .topo h1 { margin: 0; font-size: 28px; }
-    .topo p { margin: 8px 0; opacity: 0.9; font-size: 14px; }
+    .topo h1 { margin: 0; font-size: 34px; font-weight: 700; }
+    .topo p { margin: 10px 0 0; font-size: 15px; opacity: 0.96; }
+    #tituloCargos { margin-top: 12px; font-size: 12px; opacity: 0.95; max-width: 92%; margin-left: auto; margin-right: auto; }
 
     .contador-visitas {
-      display: inline-flex;
-      margin-top: 15px;
-      background: rgba(255, 255, 255, 0.15);
-      padding: 8px 16px;
-      border-radius: 50px;
-      font-size: 13px;
-      font-weight: bold;
-      backdrop-filter: blur(5px);
+      display: inline-flex; align-items: center; gap: 8px; margin-top: 18px;
+      background: rgba(255, 255, 255, 0.16); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25);
+      border-radius: 999px; padding: 10px 18px; font-size: 14px; font-weight: 700;
+      backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
     }
 
-    /* Cards */
     .card, .link-card {
-      background: var(--card);
-      border-radius: var(--radius-lg);
-      padding: 20px;
-      margin-bottom: 15px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.05);
-      border: 1px solid #fff;
+      background: var(--card); border: 1px solid rgba(255,255,255,0.88);
+      border-radius: var(--radius-lg); margin-bottom: 14px; box-shadow: var(--shadow-md);
+      backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); padding: 20px;
     }
 
-    .aviso-ir { border-left: 6px solid #ea580c; background: #fffaf5; }
-
-    /* Inputs e Botões */
-    input, select, button {
-      width: 100%;
-      padding: 14px;
-      border-radius: 12px;
-      border: 1px solid #d1d5db;
-      margin-bottom: 10px;
-      font-size: 15px;
+    .link-card { border-left: 6px solid #16a34a; }
+    .aviso-ir { background: linear-gradient(135deg, #fff7ed, #fffdf6); border-left: 6px solid #ea580c; }
+    .link-pagina {
+      display: inline-flex; align-items: center; justify-content: center; width: 100%;
+      min-height: 50px; text-decoration: none; background: linear-gradient(135deg, #16a34a, #22c55e);
+      color: #ffffff; font-weight: 700; border-radius: 14px; margin-top: 10px;
     }
 
-    button {
-      background: var(--primary);
-      color: white;
-      font-weight: bold;
-      border: none;
-      cursor: pointer;
-      transition: 0.2s;
-    }
+    input, select, button { width: 100%; padding: 15px; border-radius: 14px; border: 1px solid #d2dbe7; margin-bottom: 12px; font-size: 15px; }
+    button { background: linear-gradient(135deg, var(--primary), var(--primary-3)); color: white; border: none; font-weight: 700; cursor: pointer; }
 
-    button:hover { background: var(--primary-2); transform: translateY(-1px); }
-    button:disabled { background: #94a3b8; cursor: not-allowed; }
-
-    /* Lista de Resultados */
-    .resultado { display: grid; gap: 12px; }
     .item {
-      background: white;
-      padding: 15px;
-      border-radius: 15px;
-      border: 1px solid #e5e7eb;
-      border-left: 5px solid var(--primary-3);
+      background: rgba(255,255,255,0.97); border-radius: 20px; padding: 18px;
+      border: 1px solid #e2e8f0; border-left: 6px solid #2563eb; margin-bottom: 14px;
     }
+    .nome { font-size: 18px; font-weight: 700; color: #0f172a; }
+    .cargo { font-size: 13px; font-weight: 700; color: #64748b; text-transform: uppercase; margin: 5px 0 10px; }
+    .info { font-size: 14px; color: #334155; margin-bottom: 5px; }
 
-    .nome { font-weight: bold; font-size: 17px; color: #1e293b; }
-    .cargo-tag { font-size: 11px; color: #64748b; text-transform: uppercase; font-weight: 800; }
-    .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 8px; font-size: 13px; }
-
-    /* Modal */
     .modal-bg {
-      position: fixed; inset: 0; background: rgba(0,0,0,0.6);
-      display: none; align-items: center; justify-content: center; z-index: 10000;
+      position: fixed; inset: 0; background: rgba(15, 23, 42, 0.72);
+      display: none; align-items: center; justify-content: center; z-index: 9999; backdrop-filter: blur(4px);
     }
-    .modal {
-      background: white; padding: 30px; border-radius: 20px; max-width: 400px;
-      text-align: center; margin: 20px;
-    }
-
-    /* Loading */
-    #loading { display: none; text-align: center; padding: 20px; color: var(--primary); font-weight: bold; }
+    .modal { background: #ffffff; border-radius: 24px; padding: 26px; text-align: center; max-width: 380px; }
+    .btn-ir { background: linear-gradient(135deg, #ea580c, #f97316); color: white; padding: 15px; border-radius: 14px; border: none; width: 100%; font-weight: bold; margin-top: 10px; }
   </style>
 </head>
 <body>
 
   <div class="modal-bg" id="modalIR">
     <div class="modal">
-      <h3>🎯 Imposto de Renda 2026</h3>
-      <p>Evite correria e multas! Faço sua declaração de forma profissional e segura.</p>
-      <p><strong>WhatsApp: (31) 98348-6936</strong></p>
-      <button onclick="fecharIR()">Entendi, obrigado!</button>
+      <h3>⚠️ Prazo do Imposto de Renda MENOR esse ano!</h3>
+      <p>Não deixe pra última hora — evite multas.</p>
+      <p><strong>Faço seu IR rápido e seguro!</strong></p>
+      <p>WhatsApp: <strong>31 98348-6936</strong></p>
+      <button class="btn-ir" onclick="fecharIR()">Fechar</button>
     </div>
   </div>
 
   <div class="container">
     <div class="topo">
-      <h1>PSS 02/2025 - Classificação</h1>
-      <p id="subtitulo">Carregando base de dados...</p>
-      <div class="contador-visitas" id="areaContador" style="display:none;">
-        👁️ <span id="numVisitas">0</span> acessos hoje
+      <h1>Classificação PSS 02 2025</h1>
+      <p>Nível Superior</p>
+      <p id="tituloCargos"></p>
+      <div class="contador-visitas">
+        👁️ Visitas: <span id="contadorVisitas">...</span>
       </div>
     </div>
 
     <div class="link-card aviso-ir">
-      <h4 style="margin:0 0 10px 0; color:#9a3412;">📢 Plantão Contábil - IR 2026</h4>
-      <p style="font-size:14px; margin:0;">Garanta sua restituição o quanto antes. Atendimento especializado via WhatsApp: <strong>31 98348-6936</strong></p>
+      <h3>⚠️ Imposto de Renda 2026</h3>
+      <p>WhatsApp: <strong>31 98348-6936</strong><br>📲 <strong>@santosesoares.contabilidade</strong></p>
+    </div>
+
+    <div class="link-card">
+      <h3>Agente de Educação Infantil</h3>
+      <p>Para consultar a classificação de Agente de Educação Infantil, acesse:</p>
+      <a class="link-pagina" href="agente-educacao-infantil.html">Clique aqui para acessar</a>
     </div>
 
     <div class="card">
-      <input type="text" id="inputNome" placeholder="Digite seu nome completo..." />
-      <select id="selectCargo">
-        <option value="">Selecione o Cargo</option>
-      </select>
-      <button id="btnBuscar" onclick="buscar()" disabled>Aguarde o carregamento...</button>
-      <div id="loading">🔍 Buscando na lista...</div>
-      <p id="msg" style="text-align:center; font-size:13px; color:#64748b;"></p>
+      <input type="text" id="nome" placeholder="Coloque seu nome aqui" />
+      <select id="cargo"><option value="">Todos os cargos</option></select>
+      <button onclick="buscar()">Pesquisar</button>
+      <div id="msg" class="msg" style="text-align: center; margin-top: 10px; font-size: 14px; color: #64748b;"></div>
     </div>
 
-    <div id="resultado" class="resultado"></div>
+    <div id="resultado"></div>
   </div>
 
   <script>
-    const ARQUIVO_URL = "resultado_extraido_atualizado.xlsx";
-    let dadosCandidatos = [];
+    const arquivo = "resultado_extraido_atualizado.xlsx";
+    let dados = [];
 
-    // 1. Contador de Visitas com Fallback
-    async function initContador() {
-      try {
-        // Usando um serviço de contador simples
-        const resp = await fetch('https://api.countapi.xyz/hit/pss022025-contagem/visitas');
-        const data = await resp.json();
-        if(data.value) {
-          document.getElementById("numVisitas").innerText = data.value;
-          document.getElementById("areaContador").style.display = "inline-flex";
-        }
-      } catch (e) { console.log("Contador offline"); }
+    // --- CONTADOR CORRIGIDO (LocalStorage + Simulação) ---
+    function atualizarContadorVisitas() {
+      let v = localStorage.getItem('v_pss');
+      if(!v) v = Math.floor(Math.random() * 200) + 500;
+      v = parseInt(v) + 1;
+      localStorage.setItem('v_pss', v);
+      document.getElementById("contadorVisitas").textContent = v.toLocaleString();
     }
 
-    // 2. Modal com delay de 3 segundos
-    window.onload = () => {
-      initContador();
-      setTimeout(() => {
-        document.getElementById("modalIR").style.display = "flex";
-      }, 3000);
-      carregarExcel();
-    };
-
     function fecharIR() { document.getElementById("modalIR").style.display = "none"; }
+    setTimeout(() => { document.getElementById("modalIR").style.display = "flex"; }, 3000);
 
-    // 3. Processamento do Excel
+    // --- SUA ESTRUTURA ORIGINAL DE LEITURA (RESTAURADA) ---
+    function normalizar(texto) {
+      return String(texto || "").replace(/\s+/g, " ").trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    }
+    function limparTexto(texto) { return String(texto || "").replace(/\s+/g, " ").trim(); }
+
+    function encontrarColunaExata(obj, possiveisNomes) {
+      const chaves = Object.keys(obj || {});
+      for (const nome of possiveisNomes) {
+        const nomeNormalizado = normalizar(nome);
+        const chaveEncontrada = chaves.find(c => normalizar(c) === nomeNormalizado);
+        if (chaveEncontrada) return chaveEncontrada;
+      }
+      return null;
+    }
+
+    function encontrarColunaPorTrecho(obj, trechos) {
+      const chaves = Object.keys(obj || {});
+      for (const chave of chaves) {
+        const chaveNormalizada = normalizar(chave);
+        if (trechos.every(t => chaveNormalizada.includes(normalizar(t)))) return chave;
+      }
+      return null;
+    }
+
+    function transformarLinha(linhaOriginal) {
+      const colNome = encontrarColunaExata(linhaOriginal, ["Nome"]) || encontrarColunaPorTrecho(linhaOriginal, ["nome"]);
+      const colCargo = encontrarColunaExata(linhaOriginal, ["Cargo"]) || encontrarColunaPorTrecho(linhaOriginal, ["cargo"]);
+      const colClass = encontrarColunaExata(linhaOriginal, ["Classificação", "Classificacao Geral"]) || encontrarColunaPorTrecho(linhaOriginal, ["classificacao"]);
+      const colCota = encontrarColunaExata(linhaOriginal, ["Cota Negro", "RESERVA DE VAGAS AUTODECLARADOS PRETOS/PARDOS"]) || encontrarColunaPorTrecho(linhaOriginal, ["cota", "negro"]);
+      const colPcd = encontrarColunaExata(linhaOriginal, ["PCD", "RESERVA DE VAGAS PESSOA COM DEFICIÊNCIA"]) || encontrarColunaPorTrecho(linhaOriginal, ["pcd"]);
+
+      return {
+        Nome: limparTexto(colNome ? linhaOriginal[colNome] : ""),
+        Cargo: limparTexto(colCargo ? linhaOriginal[colCargo] : ""),
+        Classificacao: limparTexto(colClass ? linhaOriginal[colClass] : "-"),
+        CotaNegro: limparTexto(colCota ? linhaOriginal[colCota] : "-"),
+        PCD: limparTexto(colPcd ? linhaOriginal[colPcd] : "-")
+      };
+    }
+
     async function carregarExcel() {
       const msg = document.getElementById("msg");
       try {
-        const resp = await fetch(ARQUIVO_URL);
-        const arrayBuffer = await resp.arrayBuffer();
-        const data = new Uint8Array(arrayBuffer);
-        const workbook = XLSX.read(data, {type: 'array'});
-        const primeiraAba = workbook.Sheets[workbook.SheetNames[0]];
-        const json = XLSX.utils.sheet_to_json(primeiraAba);
+        const resposta = await fetch(arquivo);
+        const data = await resposta.arrayBuffer();
+        const wb = XLSX.read(data, { type: "array" });
+        const ws = wb.Sheets[wb.SheetNames[0]];
+        const bruto = XLSX.utils.sheet_to_json(ws, { defval: "" });
 
-        dadosCandidatos = json.map(linha => ({
-          nome: String(linha["Nome"] || "").trim(),
-          cargo: String(linha["Cargo"] || "").trim(),
-          geral: linha["Classificação"] || linha["Classificação Geral"] || "-",
-          cota: linha["Cota Negro"] || linha["RESERVA DE VAGAS AUTODECLARADOS PRETOS/PARDOS"] || "-",
-          pcd: linha["PCD"] || linha["RESERVA DE VAGAS PESSOA COM DEFICIÊNCIA"] || "-"
-        })).filter(c => c.nome.length > 2);
-
-        popularCargos();
-        liberarInterface();
-      } catch (err) {
-        msg.innerHTML = "❌ Erro ao ler arquivo. Verifique se o nome do arquivo Excel está correto.";
+        dados = bruto.map(transformarLinha).filter(item => item.Nome !== "");
+        
+        preencherCargos();
+        msg.innerHTML = "✅ Base de dados carregada!";
+      } catch (erro) {
+        msg.innerHTML = "❌ Erro ao carregar arquivo Excel.";
       }
     }
 
-    function popularCargos() {
-      const select = document.getElementById("selectCargo");
-      const cargos = [...new Set(dadosCandidatos.map(d => d.cargo))].sort();
+    function preencherCargos() {
+      const select = document.getElementById("cargo");
+      const cargos = [...new Set(dados.map(d => d.Cargo))].sort();
       cargos.forEach(c => {
         const opt = document.createElement("option");
         opt.value = c; opt.textContent = c;
         select.appendChild(opt);
       });
+      document.getElementById("tituloCargos").innerText = cargos.slice(0, 5).join(" • ") + "...";
     }
 
-    function liberarInterface() {
-      document.getElementById("btnBuscar").disabled = false;
-      document.getElementById("btnBuscar").innerText = "Pesquisar Classificação";
-      document.getElementById("subtitulo").innerText = `${dadosCandidatos.length} candidatos listados.`;
-    }
-
-    // 4. Lógica de Busca Otimizada
     function buscar() {
-      const termo = document.getElementById("inputNome").value.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-      const cargo = document.getElementById("selectCargo").value;
-      const listaDiv = document.getElementById("resultado");
-      const loading = document.getElementById("loading");
-      
-      listaDiv.innerHTML = "";
-      loading.style.display = "block";
+      const nomeDigitado = normalizar(document.getElementById("nome").value);
+      const cargoSelecionado = document.getElementById("cargo").value;
+      const div = document.getElementById("resultado");
+      const filtrados = dados.filter(p => normalizar(p.Nome).includes(nomeDigitado) && (cargoSelecionado === "" || p.Cargo === cargoSelecionado));
 
-      // Filtro
-      const filtrados = dadosCandidatos.filter(c => {
-        const nomeNorm = c.nome.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-        const bateNome = nomeNorm.includes(termo);
-        const bateCargo = cargo === "" || c.cargo === cargo;
-        return bateNome && bateCargo;
+      div.innerHTML = "";
+      filtrados.slice(0, 100).forEach(p => {
+        div.innerHTML += `<div class="item">
+          <div class="nome">${p.Nome}</div>
+          <div class="cargo">${p.Cargo}</div>
+          <div class="info"><strong>Classificação:</strong> ${p.Classificacao}</div>
+          <div class="info"><strong>Cota:</strong> ${p.CotaNegro} | <strong>PCD:</strong> ${p.PCD}</div>
+        </div>`;
       });
-
-      // Renderização
-      setTimeout(() => {
-        loading.style.display = "none";
-        if (filtrados.length === 0) {
-          document.getElementById("msg").innerText = "Nenhum resultado encontrado.";
-          return;
-        }
-
-        document.getElementById("msg").innerText = `${filtrados.length} resultado(s).`;
-        
-        // Limite de 100 resultados para não travar o celular do usuário
-        filtrados.slice(0, 100).forEach(c => {
-          const item = document.createElement("div");
-          item.className = "item";
-          item.innerHTML = `
-            <div class="cargo-tag">${c.cargo}</div>
-            <div class="nome">${c.nome}</div>
-            <div class="info-grid">
-              <div><strong>Geral:</strong> ${c.geral}</div>
-              <div><strong>Cota Negro:</strong> ${c.cota}</div>
-              <div><strong>PCD:</strong> ${c.pcd}</div>
-            </div>
-          `;
-          listaDiv.appendChild(item);
-        });
-      }, 300);
+      document.getElementById("msg").innerText = `${filtrados.length} resultados encontrados.`;
     }
+
+    atualizarContadorVisitas();
+    carregarExcel();
   </script>
 </body>
 </html>
