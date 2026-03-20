@@ -58,6 +58,7 @@
       background: white; padding: 10px; border-radius: 12px;
       display: inline-block; margin: 15px 0; box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     }
+    .qrcode img { display: block; width: 180px; height: 180px; }
 
     .modal-bg {
       position: fixed; inset: 0; background: rgba(15, 23, 42, 0.8);
@@ -107,7 +108,7 @@
       <h3 style="margin-top:0; color: var(--primary);">☕ Apoie o Professor Desenvolvedor</h3>
       <p style="font-size: 14px; color: #475569;">Gostou da página? Ajude a manter o projeto ativo e gratuito!</p>
       <div class="qrcode">
-        <img src="https://chart.googleapis.com/chart?chs=180x180&cht=qr&chl=996174800" alt="QR Code PIX">
+        <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=996174800" alt="QR Code PIX">
       </div>
       <p style="font-weight: bold; margin-bottom: 5px;">Chave PIX (Celular):</p>
       <code style="background: #e2e8f0; padding: 5px 10px; border-radius: 5px; font-size: 16px;">996174800</code>
@@ -121,6 +122,7 @@
     const FORM_ID = "xwvrzqzz";
     let baseDados = [];
 
+    // --- ANALYTICS ---
     function gerenciarAnalytics() {
       let visitasSite = parseInt(localStorage.getItem('pss_total_visitas') || "1200");
       visitasSite++;
@@ -166,55 +168,4 @@
       const colPcd = acharColuna(linha, ["PCD", "Deficiência"]);
       return {
         Nome: String(linha[colNome] || "").trim(),
-        Cargo: String(linha[colCargo] || "").trim(),
-        Classificacao: linha[colClass] || "-",
-        Cota: linha[colCota] || "-",
-        PCD: linha[colPcd] || "-"
-      };
-    }
-
-    async function carregarBase() {
-      try {
-        const resp = await fetch(ARQUIVO);
-        const arrayBuffer = await resp.arrayBuffer();
-        const workbook = XLSX.read(arrayBuffer, { type: "array" });
-        const sheet = workbook.Sheets[workbook.SheetNames[0]];
-        const json = XLSX.utils.sheet_to_json(sheet);
-        baseDados = json.map(formatarLinha).filter(i => i.Nome !== "");
-
-        const select = document.getElementById("selectCargo");
-        const listaNomes = document.getElementById("listaNomes");
-        const cargosUnicos = [...new Set(baseDados.map(d => d.Cargo))].sort();
-        cargosUnicos.forEach(c => {
-          const opt = document.createElement("option"); opt.value = c; opt.textContent = c; select.appendChild(opt);
-        });
-        baseDados.forEach(d => {
-          const opt = document.createElement("option"); opt.value = d.Nome; listaNomes.appendChild(opt);
-        });
-      } catch (e) { document.getElementById("msg").innerText = "Erro ao ler Excel."; }
-    }
-
-    function buscar() {
-      const nomeBusca = normalizar(document.getElementById("inputNome").value);
-      const cargoBusca = document.getElementById("selectCargo").value;
-      const resDiv = document.getElementById("resultado");
-      const filtrados = baseDados.filter(d => normalizar(d.Nome).includes(nomeBusca) && (cargoBusca === "" || d.Cargo === cargoBusca));
-      resDiv.innerHTML = "";
-      filtrados.slice(0, 50).forEach(i => {
-        resDiv.innerHTML += `<div class="item">
-          <div style="font-size:12px; font-weight:bold; color:#64748b;">${i.Cargo}</div>
-          <div style="font-size:17px; font-weight:bold;">${i.Nome}</div>
-          <div style="font-size:14px; margin-top:5px;">Geral: ${i.Classificacao} | Cota: ${i.Cota} | PCD: ${i.PCD}</div>
-        </div>`;
-      });
-      document.getElementById("msg").innerText = `${filtrados.length} resultado(s).`;
-    }
-
-    window.onload = () => {
-      gerenciarAnalytics();
-      carregarBase();
-      setTimeout(() => { document.getElementById('modalIR').style.display = 'flex'; }, 3000);
-    };
-  </script>
-</body>
-</html>
+        Cargo: String(linha[colCargo] ||
