@@ -3,720 +3,277 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>PSS 02 2025</title>
+  <title>Classificação PSS 02 2025</title>
 
   <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
 
   <style>
     :root {
       --bg-1: #eef4ff;
-      --bg-2: #f8fbff;
-      --bg-3: #ffffff;
       --primary: #1d4ed8;
       --primary-2: #2563eb;
       --primary-3: #3b82f6;
       --text: #0f172a;
       --muted: #475569;
-      --soft: #64748b;
       --line: #dbe4f0;
-      --card: rgba(255, 255, 255, 0.92);
+      --card: rgba(255, 255, 255, 0.95);
       --shadow-lg: 0 24px 60px rgba(15, 23, 42, 0.12);
-      --shadow-md: 0 14px 34px rgba(15, 23, 42, 0.08);
-      --shadow-sm: 0 8px 18px rgba(15, 23, 42, 0.05);
       --radius-xl: 28px;
       --radius-lg: 22px;
-      --radius-md: 16px;
     }
 
-    * {
-      box-sizing: border-box;
-    }
-
-    html {
-      scroll-behavior: smooth;
-    }
-
+    * { box-sizing: border-box; }
     body {
       margin: 0;
-      font-family: Arial, sans-serif;
+      font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
       color: var(--text);
-      background:
-        radial-gradient(circle at top, #dbeafe 0%, #edf4ff 26%, #f8fbff 65%, #ffffff 100%);
+      background: radial-gradient(circle at top, #dbeafe 0%, #f8fbff 100%);
       min-height: 100vh;
     }
 
-    .container {
-      max-width: 780px;
-      margin: 0 auto;
-      padding: 24px 16px 42px;
-    }
+    .container { max-width: 780px; margin: 0 auto; padding: 20px 16px; }
 
+    /* Cabeçalho */
     .topo {
       position: relative;
-      overflow: hidden;
-      background: linear-gradient(135deg, #1e40af 0%, #2563eb 48%, #60a5fa 100%);
+      background: linear-gradient(135deg, #1e40af 0%, #2563eb 100%);
       color: #ffffff;
-      padding: 34px 22px 30px;
+      padding: 40px 20px;
       border-radius: var(--radius-xl);
       text-align: center;
-      margin-bottom: 18px;
-      box-shadow: 0 22px 50px rgba(37, 99, 235, 0.22);
-      border: 1px solid rgba(255, 255, 255, 0.18);
+      margin-bottom: 20px;
+      box-shadow: 0 20px 40px rgba(37, 99, 235, 0.2);
     }
 
-    .topo::before {
-      content: "";
-      position: absolute;
-      width: 220px;
-      height: 220px;
-      top: -80px;
-      right: -55px;
-      border-radius: 50%;
-      background: rgba(255,255,255,0.10);
-    }
-
-    .topo::after {
-      content: "";
-      position: absolute;
-      width: 140px;
-      height: 140px;
-      bottom: -45px;
-      left: -35px;
-      border-radius: 50%;
-      background: rgba(255,255,255,0.08);
-    }
-
-    .topo h1,
-    .topo p,
-    #tituloCargos,
-    .contador-visitas {
-      position: relative;
-      z-index: 1;
-    }
-
-    .topo h1 {
-      margin: 0;
-      font-size: 34px;
-      font-weight: 700;
-      letter-spacing: 0.2px;
-      line-height: 1.15;
-      text-shadow: 0 2px 10px rgba(0,0,0,0.10);
-    }
-
-    .topo p {
-      margin: 10px 0 0;
-      font-size: 15px;
-      opacity: 0.96;
-    }
-
-    #tituloCargos {
-      margin-top: 12px;
-      font-size: 12px;
-      line-height: 1.7;
-      opacity: 0.95;
-      max-width: 92%;
-      margin-left: auto;
-      margin-right: auto;
-    }
+    .topo h1 { margin: 0; font-size: 28px; }
+    .topo p { margin: 8px 0; opacity: 0.9; font-size: 14px; }
 
     .contador-visitas {
       display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      margin-top: 18px;
-      background: rgba(255, 255, 255, 0.16);
-      color: #ffffff;
-      border: 1px solid rgba(255, 255, 255, 0.25);
-      border-radius: 999px;
-      padding: 10px 18px;
-      font-size: 14px;
-      font-weight: 700;
-      box-shadow: 0 10px 26px rgba(0,0,0,0.08);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
+      margin-top: 15px;
+      background: rgba(255, 255, 255, 0.15);
+      padding: 8px 16px;
+      border-radius: 50px;
+      font-size: 13px;
+      font-weight: bold;
+      backdrop-filter: blur(5px);
     }
 
-    .contador-visitas span {
-      font-size: 16px;
-    }
-
-    .card,
-    .link-card {
+    /* Cards */
+    .card, .link-card {
       background: var(--card);
-      border: 1px solid rgba(255,255,255,0.88);
       border-radius: var(--radius-lg);
-      margin-bottom: 14px;
-      box-shadow: var(--shadow-md);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-    }
-
-    .link-card {
-      padding: 18px;
-      border-left: 6px solid #16a34a;
-      transition: transform 0.18s ease, box-shadow 0.18s ease;
-    }
-
-    .link-card:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 18px 36px rgba(15, 23, 42, 0.09);
-    }
-
-    .link-card h3 {
-      margin: 0 0 8px;
-      font-size: 18px;
-      color: #0f172a;
-      line-height: 1.3;
-    }
-
-    .link-card p {
-      margin: 0 0 12px;
-      font-size: 14px;
-      line-height: 1.6;
-      color: #475569;
-    }
-
-    .link-pagina {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 100%;
-      min-height: 50px;
-      text-align: center;
-      text-decoration: none;
-      background: linear-gradient(135deg, #16a34a, #22c55e);
-      color: #ffffff;
-      font-weight: 700;
-      padding: 14px 16px;
-      border-radius: 14px;
-      box-shadow: 0 12px 24px rgba(34, 197, 94, 0.22);
-      transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease;
-    }
-
-    .link-pagina:hover {
-      transform: translateY(-1px);
-      filter: brightness(1.02);
-    }
-
-    .aviso-ir {
-      background: linear-gradient(135deg, #fff7ed, #fffdf6);
-      border-left: 6px solid #ea580c;
-    }
-
-    .aviso-ir h3 {
-      color: #9a3412;
-    }
-
-    .card {
       padding: 20px;
+      margin-bottom: 15px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+      border: 1px solid #fff;
     }
 
-    input,
-    select {
+    .aviso-ir { border-left: 6px solid #ea580c; background: #fffaf5; }
+
+    /* Inputs e Botões */
+    input, select, button {
       width: 100%;
-      padding: 15px 16px;
-      border-radius: 14px;
-      border: 1px solid #d2dbe7;
+      padding: 14px;
+      border-radius: 12px;
+      border: 1px solid #d1d5db;
+      margin-bottom: 10px;
       font-size: 15px;
-      margin-bottom: 12px;
-      background: #ffffff;
-      color: #0f172a;
-      outline: none;
-      transition: border-color 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease;
-      box-shadow: inset 0 1px 2px rgba(15, 23, 42, 0.03);
-    }
-
-    input::placeholder {
-      color: #94a3b8;
-    }
-
-    input:focus,
-    select:focus {
-      border-color: #60a5fa;
-      box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.14);
-      transform: translateY(-1px);
     }
 
     button {
-      width: 100%;
-      min-height: 52px;
-      padding: 15px 16px;
+      background: var(--primary);
+      color: white;
+      font-weight: bold;
       border: none;
-      border-radius: 14px;
-      background: linear-gradient(135deg, var(--primary), var(--primary-3));
-      color: #ffffff;
-      font-size: 15px;
-      font-weight: 700;
       cursor: pointer;
-      box-shadow: 0 14px 28px rgba(37, 99, 235, 0.22);
-      transition: transform 0.18s ease, box-shadow 0.18s ease, opacity 0.18s ease, filter 0.18s ease;
+      transition: 0.2s;
     }
 
-    button:hover {
-      transform: translateY(-1px);
-      filter: brightness(1.02);
-    }
+    button:hover { background: var(--primary-2); transform: translateY(-1px); }
+    button:disabled { background: #94a3b8; cursor: not-allowed; }
 
-    button:active {
-      transform: scale(0.995);
-    }
-
-    .resultado {
-      display: grid;
-      gap: 14px;
-      margin-top: 8px;
-    }
-
+    /* Lista de Resultados */
+    .resultado { display: grid; gap: 12px; }
     .item {
-      position: relative;
-      overflow: hidden;
-      background: rgba(255,255,255,0.97);
-      border-radius: 20px;
-      padding: 18px 18px 16px;
-      border: 1px solid #e2e8f0;
-      box-shadow: var(--shadow-sm);
-      transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+      background: white;
+      padding: 15px;
+      border-radius: 15px;
+      border: 1px solid #e5e7eb;
+      border-left: 5px solid var(--primary-3);
     }
 
-    .item:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 16px 34px rgba(15, 23, 42, 0.08);
-      border-color: #cfe0ff;
-    }
+    .nome { font-weight: bold; font-size: 17px; color: #1e293b; }
+    .cargo-tag { font-size: 11px; color: #64748b; text-transform: uppercase; font-weight: 800; }
+    .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 8px; font-size: 13px; }
 
-    .item.destaque {
-      background: linear-gradient(180deg, #ffffff 0%, #f9fbff 100%);
-      border: 1px solid #d7e6ff;
-    }
-
-    .item.destaque::before {
-      content: "";
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 6px;
-      height: 100%;
-      background: linear-gradient(180deg, #2563eb, #60a5fa);
-      border-radius: 20px 0 0 20px;
-    }
-
-    .nome {
-      font-size: 18px;
-      font-weight: 700;
-      color: #0f172a;
-      margin-bottom: 6px;
-      padding-left: 10px;
-      line-height: 1.35;
-    }
-
-    .cargo {
-      font-size: 13px;
-      font-weight: 700;
-      letter-spacing: 0.2px;
-      color: #64748b;
-      text-transform: uppercase;
-      margin-bottom: 12px;
-      padding-left: 10px;
-    }
-
-    .info {
-      font-size: 14px;
-      color: #334155;
-      margin-bottom: 7px;
-      padding-left: 10px;
-      line-height: 1.6;
-    }
-
-    .msg {
-      text-align: center;
-      color: #64748b;
-      margin-top: 12px;
-      font-size: 14px;
-      line-height: 1.6;
-    }
-
-    .erro {
-      color: #b91c1c;
-      font-weight: 700;
-    }
-
+    /* Modal */
     .modal-bg {
-      position: fixed;
-      inset: 0;
-      background: rgba(15, 23, 42, 0.72);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 9999;
-      padding: 16px;
-      backdrop-filter: blur(4px);
-      -webkit-backdrop-filter: blur(4px);
+      position: fixed; inset: 0; background: rgba(0,0,0,0.6);
+      display: none; align-items: center; justify-content: center; z-index: 10000;
     }
-
     .modal {
-      width: 100%;
-      max-width: 380px;
-      background: #ffffff;
-      border-radius: 24px;
-      padding: 26px 22px;
-      text-align: center;
-      box-shadow: var(--shadow-lg);
-      border: 1px solid rgba(255,255,255,0.85);
-      animation: subir 0.24s ease;
+      background: white; padding: 30px; border-radius: 20px; max-width: 400px;
+      text-align: center; margin: 20px;
     }
 
-    @keyframes subir {
-      from {
-        opacity: 0;
-        transform: translateY(12px) scale(0.985);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-      }
-    }
-
-    .modal h3 {
-      margin: 0 0 10px;
-      font-size: 22px;
-      line-height: 1.3;
-      color: #111827;
-    }
-
-    .modal p {
-      margin: 8px 0;
-      font-size: 14px;
-      line-height: 1.6;
-      color: #475569;
-    }
-
-    .btn-ir {
-      margin-top: 10px;
-      background: linear-gradient(135deg, #ea580c, #f97316);
-      box-shadow: 0 12px 24px rgba(249, 115, 22, 0.20);
-    }
-
-    @media (max-width: 600px) {
-      .container {
-        padding: 14px 12px 28px;
-      }
-
-      .topo {
-        padding: 28px 16px 24px;
-        border-radius: 22px;
-      }
-
-      .topo h1 {
-        font-size: 28px;
-      }
-
-      .card,
-      .link-card,
-      .item,
-      .modal {
-        border-radius: 18px;
-      }
-
-      .item.destaque::before {
-        border-radius: 18px 0 0 18px;
-      }
-    }
+    /* Loading */
+    #loading { display: none; text-align: center; padding: 20px; color: var(--primary); font-weight: bold; }
   </style>
 </head>
-
 <body>
 
-  <!-- POPUP IR -->
-  <div class="modal-bg" id="modalIR" style="display: none;">
+  <div class="modal-bg" id="modalIR">
     <div class="modal">
-      <h3>⚠️ Prazo do Imposto de Renda MENOR esse ano!</h3>
-      <p>Não deixe pra última hora — evite multas e problemas com a Receita.</p>
-      <p><strong>Faço seu IR rápido, seguro e sem complicação!</strong></p>
-      <p>Chama no WhatsApp agora: <strong>31 98348-6936</strong></p>
-      <p>📲 <strong>@santosesoares.contabilidade</strong></p>
-      <button class="btn-ir" onclick="fecharIR()">Fechar</button>
+      <h3>🎯 Imposto de Renda 2026</h3>
+      <p>Evite correria e multas! Faço sua declaração de forma profissional e segura.</p>
+      <p><strong>WhatsApp: (31) 98348-6936</strong></p>
+      <button onclick="fecharIR()">Entendi, obrigado!</button>
     </div>
   </div>
 
   <div class="container">
-
     <div class="topo">
-      <h1>Classificação PSS 02 2025</h1>
-      <p>Nível Superior</p>
-      <p id="tituloCargos"></p>
-
-      <div class="contador-visitas">
-        👁️ Visitas: <span id="contadorVisitas">Carregando...</span>
+      <h1>PSS 02/2025 - Classificação</h1>
+      <p id="subtitulo">Carregando base de dados...</p>
+      <div class="contador-visitas" id="areaContador" style="display:none;">
+        👁️ <span id="numVisitas">0</span> acessos hoje
       </div>
     </div>
 
     <div class="link-card aviso-ir">
-      <h3>⚠️ Imposto de Renda 2026</h3>
-      <p>Prazo do Imposto de Renda menor esse ano.</p>
-      <p>Não deixe pra última hora — evite multas e problemas com a Receita.</p>
-      <p><strong>Faço seu IR rápido, seguro e sem complicação!</strong></p>
-      <p>WhatsApp: <strong>31 98348-6936</strong><br>📲 <strong>@santosesoares.contabilidade</strong></p>
-    </div>
-
-    <div class="link-card">
-      <h3>Agente de Educação Infantil</h3>
-      <p>Para consultar a classificação de Agente de Educação Infantil, acesse a página específica abaixo.</p>
-      <a class="link-pagina" href="agente-educacao-infantil.html">Clique aqui para acessar</a>
+      <h4 style="margin:0 0 10px 0; color:#9a3412;">📢 Plantão Contábil - IR 2026</h4>
+      <p style="font-size:14px; margin:0;">Garanta sua restituição o quanto antes. Atendimento especializado via WhatsApp: <strong>31 98348-6936</strong></p>
     </div>
 
     <div class="card">
-      <input type="text" id="nome" placeholder="Coloque seu nome aqui" />
-      <select id="cargo">
-        <option value="">Todos os cargos</option>
+      <input type="text" id="inputNome" placeholder="Digite seu nome completo..." />
+      <select id="selectCargo">
+        <option value="">Selecione o Cargo</option>
       </select>
-      <button onclick="buscar()">Pesquisar</button>
-      <div id="msg" class="msg"></div>
+      <button id="btnBuscar" onclick="buscar()" disabled>Aguarde o carregamento...</button>
+      <div id="loading">🔍 Buscando na lista...</div>
+      <p id="msg" style="text-align:center; font-size:13px; color:#64748b;"></p>
     </div>
 
     <div id="resultado" class="resultado"></div>
   </div>
 
   <script>
-    const arquivo = "resultado_extraido_atualizado.xlsx";
-    let dados = [];
+    const ARQUIVO_URL = "resultado_extraido_atualizado.xlsx";
+    let dadosCandidatos = [];
 
-    async function atualizarContadorVisitas() {
-      const contador = document.getElementById("contadorVisitas");
-
+    // 1. Contador de Visitas com Fallback
+    async function initContador() {
       try {
-        const namespace = "pss-02-2025";
-        const key = "visitas-site";
-        const url = `https://countapi.mileshilliard.com/api/v1/hit/${namespace}/${key}`;
-
-        const resposta = await fetch(url, { cache: "no-store" });
-
-        if (!resposta.ok) {
-          throw new Error("Falha ao acessar o serviço de contador.");
+        // Usando um serviço de contador simples
+        const resp = await fetch('https://api.countapi.xyz/hit/pss022025-contagem/visitas');
+        const data = await resp.json();
+        if(data.value) {
+          document.getElementById("numVisitas").innerText = data.value;
+          document.getElementById("areaContador").style.display = "inline-flex";
         }
+      } catch (e) { console.log("Contador offline"); }
+    }
 
-        const data = await resposta.json();
-        contador.textContent = data.value ?? "indisponível";
-      } catch (erro) {
-        console.error("Erro no contador:", erro);
-        contador.textContent = "indisponível";
+    // 2. Modal com delay de 3 segundos
+    window.onload = () => {
+      initContador();
+      setTimeout(() => {
+        document.getElementById("modalIR").style.display = "flex";
+      }, 3000);
+      carregarExcel();
+    };
+
+    function fecharIR() { document.getElementById("modalIR").style.display = "none"; }
+
+    // 3. Processamento do Excel
+    async function carregarExcel() {
+      const msg = document.getElementById("msg");
+      try {
+        const resp = await fetch(ARQUIVO_URL);
+        const arrayBuffer = await resp.arrayBuffer();
+        const data = new Uint8Array(arrayBuffer);
+        const workbook = XLSX.read(data, {type: 'array'});
+        const primeiraAba = workbook.Sheets[workbook.SheetNames[0]];
+        const json = XLSX.utils.sheet_to_json(primeiraAba);
+
+        dadosCandidatos = json.map(linha => ({
+          nome: String(linha["Nome"] || "").trim(),
+          cargo: String(linha["Cargo"] || "").trim(),
+          geral: linha["Classificação"] || linha["Classificação Geral"] || "-",
+          cota: linha["Cota Negro"] || linha["RESERVA DE VAGAS AUTODECLARADOS PRETOS/PARDOS"] || "-",
+          pcd: linha["PCD"] || linha["RESERVA DE VAGAS PESSOA COM DEFICIÊNCIA"] || "-"
+        })).filter(c => c.nome.length > 2);
+
+        popularCargos();
+        liberarInterface();
+      } catch (err) {
+        msg.innerHTML = "❌ Erro ao ler arquivo. Verifique se o nome do arquivo Excel está correto.";
       }
     }
 
-    function fecharIR() {
-      document.getElementById("modalIR").style.display = "none";
-    }
-
-    function normalizar(texto) {
-      return String(texto || "")
-        .replace(/\s+/g, " ")
-        .trim()
-        .toLowerCase()
-        .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "");
-    }
-
-    function limparTexto(texto) {
-      return String(texto || "").replace(/\s+/g, " ").trim();
-    }
-
-    function encontrarColunaExata(obj, possiveisNomes) {
-      const chaves = Object.keys(obj || {});
-      for (const nome of possiveisNomes) {
-        const nomeNormalizado = normalizar(nome);
-        const chaveEncontrada = chaves.find(c => normalizar(c) === nomeNormalizado);
-        if (chaveEncontrada) return chaveEncontrada;
-      }
-      return null;
-    }
-
-    function encontrarColunaPorTrecho(obj, trechos) {
-      const chaves = Object.keys(obj || {});
-      for (const chave of chaves) {
-        const chaveNormalizada = normalizar(chave);
-        const encontrouTodos = trechos.every(t => chaveNormalizada.includes(normalizar(t)));
-        if (encontrouTodos) return chave;
-      }
-      return null;
-    }
-
-    function encontrarColunaNome(obj) {
-      return encontrarColunaExata(obj, ["Nome"]) ||
-             encontrarColunaPorTrecho(obj, ["nome"]);
-    }
-
-    function encontrarColunaCargo(obj) {
-      return encontrarColunaExata(obj, ["Cargo"]) ||
-             encontrarColunaPorTrecho(obj, ["cargo"]);
-    }
-
-    function encontrarColunaClassificacao(obj) {
-      return encontrarColunaExata(obj, [
-        "Classificação",
-        "Classificacao",
-        "Classificação Geral",
-        "Classificacao Geral"
-      ]) ||
-      encontrarColunaPorTrecho(obj, ["classificacao", "geral"]) ||
-      encontrarColunaPorTrecho(obj, ["classificacao"]);
-    }
-
-    function encontrarColunaCotaNegro(obj) {
-      return encontrarColunaExata(obj, [
-        "Classificação Cota Negro",
-        "Classificacao Cota Negro",
-        "RESERVA DE VAGAS AUTODECLARADOS PRETOS OU PARDOS",
-        "RESERVA DE VAGAS AUTODECLARADOS PRETOS/PARDOS",
-        "Cota Negro",
-        "Cota Racial"
-      ]) ||
-      encontrarColunaPorTrecho(obj, ["pretos", "pardos"]) ||
-      encontrarColunaPorTrecho(obj, ["autodeclarados", "pretos"]) ||
-      encontrarColunaPorTrecho(obj, ["cota", "negro"]) ||
-      encontrarColunaPorTrecho(obj, ["cota", "racial"]) ||
-      encontrarColunaPorTrecho(obj, ["reserva", "pretos"]) ||
-      encontrarColunaPorTrecho(obj, ["reserva", "pardos"]);
-    }
-
-    function encontrarColunaPCD(obj) {
-      return encontrarColunaExata(obj, [
-        "RESERVA DE VAGAS PESSOA COM DEFICIÊNCIA",
-        "RESERVA DE VAGAS PESSOA COM DEFICIENCIA",
-        "PcD",
-        "PCD"
-      ]) ||
-      encontrarColunaPorTrecho(obj, ["pessoa", "deficiencia"]) ||
-      encontrarColunaPorTrecho(obj, ["pcd"]);
-    }
-
-    function transformarLinha(linhaOriginal) {
-      const colNome = encontrarColunaNome(linhaOriginal);
-      const colCargo = encontrarColunaCargo(linhaOriginal);
-      const colClassificacao = encontrarColunaClassificacao(linhaOriginal);
-      const colCotaNegro = encontrarColunaCotaNegro(linhaOriginal);
-      const colPcd = encontrarColunaPCD(linhaOriginal);
-
-      return {
-        Nome: limparTexto(colNome ? linhaOriginal[colNome] : ""),
-        Cargo: limparTexto(colCargo ? linhaOriginal[colCargo] : ""),
-        Classificacao: limparTexto(colClassificacao ? linhaOriginal[colClassificacao] : ""),
-        CotaNegro: limparTexto(colCotaNegro ? linhaOriginal[colCotaNegro] : ""),
-        PCD: limparTexto(colPcd ? linhaOriginal[colPcd] : "")
-      };
-    }
-
-    function preencherCargos() {
-      const select = document.getElementById("cargo");
-      select.innerHTML = '<option value="">Todos os cargos</option>';
-
-      const cargos = [...new Set(
-        dados
-          .map(d => limparTexto(d.Cargo))
-          .filter(c => c !== "")
-      )].sort((a, b) => a.localeCompare(b, "pt-BR"));
-
-      cargos.forEach(cargo => {
+    function popularCargos() {
+      const select = document.getElementById("selectCargo");
+      const cargos = [...new Set(dadosCandidatos.map(d => d.cargo))].sort();
+      cargos.forEach(c => {
         const opt = document.createElement("option");
-        opt.value = cargo;
-        opt.textContent = cargo;
+        opt.value = c; opt.textContent = c;
         select.appendChild(opt);
       });
     }
 
-    function mostrarCargosNoTitulo() {
-      const cargos = [...new Set(
-        dados
-          .map(d => limparTexto(d.Cargo))
-          .filter(c => c !== "")
-      )].sort((a, b) => a.localeCompare(b, "pt-BR"));
-
-      let texto = cargos.join(" • ");
-      if (texto.length > 180) {
-        texto = texto.substring(0, 180) + "...";
-      }
-
-      document.getElementById("tituloCargos").innerText = texto || "Cargos não encontrados no arquivo.";
+    function liberarInterface() {
+      document.getElementById("btnBuscar").disabled = false;
+      document.getElementById("btnBuscar").innerText = "Pesquisar Classificação";
+      document.getElementById("subtitulo").innerText = `${dadosCandidatos.length} candidatos listados.`;
     }
 
+    // 4. Lógica de Busca Otimizada
     function buscar() {
-      const nomeDigitado = normalizar(document.getElementById("nome").value);
-      const cargoSelecionado = limparTexto(document.getElementById("cargo").value);
+      const termo = document.getElementById("inputNome").value.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+      const cargo = document.getElementById("selectCargo").value;
+      const listaDiv = document.getElementById("resultado");
+      const loading = document.getElementById("loading");
+      
+      listaDiv.innerHTML = "";
+      loading.style.display = "block";
 
-      const div = document.getElementById("resultado");
-      const msg = document.getElementById("msg");
-
-      div.innerHTML = "";
-      msg.innerHTML = "";
-
-      let resultado = [...dados];
-
-      if (nomeDigitado) {
-        resultado = resultado.filter(p => normalizar(p.Nome).includes(nomeDigitado));
-      }
-
-      if (cargoSelecionado) {
-        resultado = resultado.filter(p => limparTexto(p.Cargo) === cargoSelecionado);
-      }
-
-      if (resultado.length === 0) {
-        msg.innerHTML = "Nenhum resultado encontrado.";
-        return;
-      }
-
-      resultado.forEach(p => {
-        div.innerHTML += `
-          <div class="item destaque">
-            <div class="nome">${p.Nome || "-"}</div>
-            <div class="cargo">${p.Cargo || ""}</div>
-            <div class="info"><strong>Classificação:</strong> ${p.Classificacao || "-"}</div>
-            <div class="info"><strong>Cota Negro:</strong> ${p.CotaNegro || "-"}</div>
-            <div class="info"><strong>PCD:</strong> ${p.PCD || "-"}</div>
-          </div>
-        `;
+      // Filtro
+      const filtrados = dadosCandidatos.filter(c => {
+        const nomeNorm = c.nome.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+        const bateNome = nomeNorm.includes(termo);
+        const bateCargo = cargo === "" || c.cargo === cargo;
+        return bateNome && bateCargo;
       });
 
-      msg.innerHTML = `${resultado.length} resultado(s) encontrado(s).`;
+      // Renderização
+      setTimeout(() => {
+        loading.style.display = "none";
+        if (filtrados.length === 0) {
+          document.getElementById("msg").innerText = "Nenhum resultado encontrado.";
+          return;
+        }
+
+        document.getElementById("msg").innerText = `${filtrados.length} resultado(s).`;
+        
+        // Limite de 100 resultados para não travar o celular do usuário
+        filtrados.slice(0, 100).forEach(c => {
+          const item = document.createElement("div");
+          item.className = "item";
+          item.innerHTML = `
+            <div class="cargo-tag">${c.cargo}</div>
+            <div class="nome">${c.nome}</div>
+            <div class="info-grid">
+              <div><strong>Geral:</strong> ${c.geral}</div>
+              <div><strong>Cota Negro:</strong> ${c.cota}</div>
+              <div><strong>PCD:</strong> ${c.pcd}</div>
+            </div>
+          `;
+          listaDiv.appendChild(item);
+        });
+      }, 300);
     }
-
-    async function carregarExcel() {
-      const msg = document.getElementById("msg");
-
-      try {
-        const resposta = await fetch(arquivo);
-
-        if (!resposta.ok) {
-          throw new Error("Arquivo não encontrado: " + arquivo);
-        }
-
-        const data = await resposta.arrayBuffer();
-        const wb = XLSX.read(data, { type: "array" });
-
-        if (!wb.SheetNames || wb.SheetNames.length === 0) {
-          throw new Error("O Excel não possui abas.");
-        }
-
-        const ws = wb.Sheets[wb.SheetNames[0]];
-        const bruto = XLSX.utils.sheet_to_json(ws, { defval: "" });
-
-        dados = bruto
-          .map(transformarLinha)
-          .filter(item => item.Nome !== "");
-
-        if (dados.length === 0) {
-          throw new Error("Nenhum dado válido foi encontrado na primeira aba.");
-        }
-
-        preencherCargos();
-        mostrarCargosNoTitulo();
-        msg.innerHTML = "Arquivo carregado com sucesso.";
-      } catch (erro) {
-        console.error(erro);
-        msg.innerHTML = `<span class="erro">Erro ao carregar o Excel: ${erro.message}</span>`;
-      }
-    }
-
-    atualizarContadorVisitas();
-    carregarExcel();
   </script>
-
 </body>
 </html>
