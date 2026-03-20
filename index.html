@@ -297,106 +297,19 @@
       animation: subir 0.25s ease;
     }
 
-    @keyframes subir {
-      from {
-        opacity: 0;
-        transform: translateY(16px) scale(0.98);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-      }
-    }
-
-    .modal h3 {
-      margin-top: 0;
-      margin-bottom: 10px;
-      font-size: 22px;
-      color: #111827;
-    }
-
-    .modal p {
-      font-size: 14px;
-      color: #4b5563;
-      line-height: 1.5;
-      margin: 8px 0;
-    }
-
-    .pix {
-      font-size: 22px;
-      font-weight: bold;
-      color: #15803d;
-      margin: 14px 0;
-      word-break: break-word;
-      background: #f0fdf4;
-      border: 1px dashed #86efac;
-      padding: 12px;
-      border-radius: 14px;
-    }
-
-    .btn-secundario {
-      margin-top: 8px;
-      background: linear-gradient(135deg, #16a34a, #22c55e);
-      box-shadow: 0 12px 24px rgba(34, 197, 94, 0.2);
-    }
-
     .btn-ir {
       margin-top: 8px;
       background: linear-gradient(135deg, #ea580c, #f97316);
       box-shadow: 0 12px 24px rgba(249, 115, 22, 0.2);
-    }
-
-    @media (max-width: 600px) {
-      .container {
-        padding: 14px 12px 28px;
-      }
-
-      .topo {
-        padding: 24px 16px;
-        border-radius: 20px;
-      }
-
-      .topo h1 {
-        font-size: 26px;
-      }
-
-      .card,
-      .link-card {
-        border-radius: 18px;
-      }
-
-      .item {
-        border-radius: 18px;
-      }
-
-      .modal {
-        border-radius: 20px;
-      }
     }
   </style>
 </head>
 
 <body>
 
-  <!-- POPUP PIX -->
-  <div class="modal-bg" id="modal">
-    <div class="modal">
-      <h3>Apoie este projeto</h3>
-      <p>Se te ajudou, envie um PIX:</p>
-      <div class="pix" id="chavePix">31 99617-4800</div>
-      <button class="btn-secundario" onclick="copiarPix()">Copiar chave PIX</button>
-      <button style="margin-top:8px;" onclick="fechar()">Entrar</button>
-    </div>
-  </div>
-
-  <!-- POPUP IR -->
   <div class="modal-bg" id="modalIR" style="display: none;">
     <div class="modal">
       <h3>⚠️ Prazo do Imposto de Renda MENOR esse ano!</h3>
-      <p>Não deixe pra última hora — evite multas e problemas com a Receita.</p>
-      <p><strong>Faço seu IR rápido, seguro e sem complicação!</strong></p>
-      <p>Chama no WhatsApp agora: <strong>31 98348-6936</strong></p>
-      <p>📲 <strong>@santosesoares.contabilidade</strong></p>
       <button class="btn-ir" onclick="fecharIR()">Fechar</button>
     </div>
   </div>
@@ -404,31 +317,13 @@
   <div class="container">
 
     <div class="topo">
-      <h1>PSS 02 2025</h1>
+      <h1>Classificação PSS 02 2025</h1>
       <p>Nível Superior</p>
       <p id="tituloCargos"></p>
 
-      <!-- CONTADOR -->
       <div class="contador-visitas">
         👁️ Visitas: <span id="contadorVisitas">Carregando...</span>
       </div>
-
-    </div>
-
-    <!-- AVISO IR -->
-    <div class="link-card aviso-ir">
-      <h3>⚠️ Imposto de Renda 2026</h3>
-      <p>Prazo do Imposto de Renda menor esse ano.</p>
-      <p>Não deixe pra última hora — evite multas e problemas com a Receita.</p>
-      <p><strong>Faço seu IR rápido, seguro e sem complicação!</strong></p>
-      <p>WhatsApp: <strong>31 98348-6936</strong><br>📲 <strong>@santosesoares.contabilidade</strong></p>
-    </div>
-
-    <!-- LINK PARA AGENTE DE EDUCAÇÃO INFANTIL -->
-    <div class="link-card">
-      <h3>Agente de Educação Infantil</h3>
-      <p>Para consultar a classificação de Agente de Educação Infantil, acesse a página específica abaixo.</p>
-      <a class="link-pagina" href="agente-educacao-infantil.html">Clique aqui para acessar</a>
     </div>
 
     <div class="card">
@@ -444,268 +339,9 @@
   </div>
 
   <script>
-    const arquivo = "resultado_extraido_atualizado.xlsx";
-    let dados = [];
-
-    // CONTADOR MELHORADO
-    async function atualizarContadorVisitas() {
-      const contador = document.getElementById("contadorVisitas");
-
-      try {
-        const namespace = "pss-02-2025";
-        const key = "visitas-site";
-
-        let resposta = await fetch(`https://api.countapi.xyz/get/${namespace}/${key}`);
-
-        if (resposta.status === 404) {
-          await fetch(`https://api.countapi.xyz/create?namespace=${namespace}&key=${key}&value=0`);
-        }
-
-        resposta = await fetch(`https://api.countapi.xyz/hit/${namespace}/${key}`);
-
-        const data = await resposta.json();
-        contador.textContent = data.value;
-
-      } catch (erro) {
-        console.error("Erro no contador:", erro);
-        contador.textContent = "indisponível";
-      }
-    }
-
-    function fechar() {
-      document.getElementById("modal").style.display = "none";
-      document.getElementById("modalIR").style.display = "flex";
-    }
-
-    function abrir() {
-      document.getElementById("modal").style.display = "flex";
-    }
-
     function fecharIR() {
       document.getElementById("modalIR").style.display = "none";
     }
-
-    function copiarPix() {
-      const chave = document.getElementById("chavePix").innerText;
-      navigator.clipboard.writeText(chave).then(() => {
-        alert("Chave PIX copiada: " + chave);
-      }).catch(() => {
-        alert("Não foi possível copiar automaticamente. Chave PIX: " + chave);
-      });
-    }
-
-    function normalizar(texto) {
-      return String(texto || "")
-        .replace(/\s+/g, " ")
-        .trim()
-        .toLowerCase()
-        .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "");
-    }
-
-    function limparTexto(texto) {
-      return String(texto || "").replace(/\s+/g, " ").trim();
-    }
-
-    function encontrarColunaExata(obj, possiveisNomes) {
-      const chaves = Object.keys(obj || {});
-      for (const nome of possiveisNomes) {
-        const nomeNormalizado = normalizar(nome);
-        const chaveEncontrada = chaves.find(c => normalizar(c) === nomeNormalizado);
-        if (chaveEncontrada) return chaveEncontrada;
-      }
-      return null;
-    }
-
-    function encontrarColunaPorTrecho(obj, trechos) {
-      const chaves = Object.keys(obj || {});
-      for (const chave of chaves) {
-        const chaveNormalizada = normalizar(chave);
-        const encontrouTodos = trechos.every(t => chaveNormalizada.includes(normalizar(t)));
-        if (encontrouTodos) return chave;
-      }
-      return null;
-    }
-
-    function encontrarColunaNome(obj) {
-      return encontrarColunaExata(obj, ["Nome"]) ||
-             encontrarColunaPorTrecho(obj, ["nome"]);
-    }
-
-    function encontrarColunaCargo(obj) {
-      return encontrarColunaExata(obj, ["Cargo"]) ||
-             encontrarColunaPorTrecho(obj, ["cargo"]);
-    }
-
-    function encontrarColunaClassificacao(obj) {
-      return encontrarColunaExata(obj, [
-        "Classificação",
-        "Classificacao",
-        "Classificação Geral",
-        "Classificacao Geral"
-      ]) ||
-      encontrarColunaPorTrecho(obj, ["classificacao", "geral"]) ||
-      encontrarColunaPorTrecho(obj, ["classificacao"]);
-    }
-
-    function encontrarColunaCotaNegro(obj) {
-      return encontrarColunaExata(obj, [
-        "Classificação Cota Negro",
-        "Classificacao Cota Negro",
-        "RESERVA DE VAGAS AUTODECLARADOS PRETOS OU PARDOS",
-        "RESERVA DE VAGAS AUTODECLARADOS PRETOS/PARDOS",
-        "Cota Negro",
-        "Cota Racial"
-      ]) ||
-      encontrarColunaPorTrecho(obj, ["pretos", "pardos"]) ||
-      encontrarColunaPorTrecho(obj, ["autodeclarados", "pretos"]) ||
-      encontrarColunaPorTrecho(obj, ["cota", "negro"]) ||
-      encontrarColunaPorTrecho(obj, ["cota", "racial"]) ||
-      encontrarColunaPorTrecho(obj, ["reserva", "pretos"]) ||
-      encontrarColunaPorTrecho(obj, ["reserva", "pardos"]);
-    }
-
-    function encontrarColunaPCD(obj) {
-      return encontrarColunaExata(obj, [
-        "RESERVA DE VAGAS PESSOA COM DEFICIÊNCIA",
-        "RESERVA DE VAGAS PESSOA COM DEFICIENCIA",
-        "PcD",
-        "PCD"
-      ]) ||
-      encontrarColunaPorTrecho(obj, ["pessoa", "deficiencia"]) ||
-      encontrarColunaPorTrecho(obj, ["pcd"]);
-    }
-
-    function transformarLinha(linhaOriginal) {
-      const colNome = encontrarColunaNome(linhaOriginal);
-      const colCargo = encontrarColunaCargo(linhaOriginal);
-      const colClassificacao = encontrarColunaClassificacao(linhaOriginal);
-      const colCotaNegro = encontrarColunaCotaNegro(linhaOriginal);
-      const colPcd = encontrarColunaPCD(linhaOriginal);
-
-      return {
-        Nome: limparTexto(colNome ? linhaOriginal[colNome] : ""),
-        Cargo: limparTexto(colCargo ? linhaOriginal[colCargo] : ""),
-        Classificacao: limparTexto(colClassificacao ? linhaOriginal[colClassificacao] : ""),
-        CotaNegro: limparTexto(colCotaNegro ? linhaOriginal[colCotaNegro] : ""),
-        PCD: limparTexto(colPcd ? linhaOriginal[colPcd] : "")
-      };
-    }
-
-    function preencherCargos() {
-      const select = document.getElementById("cargo");
-      select.innerHTML = '<option value="">Todos os cargos</option>';
-
-      const cargos = [...new Set(
-        dados
-          .map(d => limparTexto(d.Cargo))
-          .filter(c => c !== "")
-      )].sort((a, b) => a.localeCompare(b, "pt-BR"));
-
-      cargos.forEach(cargo => {
-        const opt = document.createElement("option");
-        opt.value = cargo;
-        opt.textContent = cargo;
-        select.appendChild(opt);
-      });
-    }
-
-    function mostrarCargosNoTitulo() {
-      const cargos = [...new Set(
-        dados
-          .map(d => limparTexto(d.Cargo))
-          .filter(c => c !== "")
-      )].sort((a, b) => a.localeCompare(b, "pt-BR"));
-
-      let texto = cargos.join(" • ");
-      if (texto.length > 180) {
-        texto = texto.substring(0, 180) + "...";
-      }
-
-      document.getElementById("tituloCargos").innerText = texto || "Cargos não encontrados no arquivo.";
-    }
-
-    function buscar() {
-      abrir();
-
-      const nomeDigitado = normalizar(document.getElementById("nome").value);
-      const cargoSelecionado = limparTexto(document.getElementById("cargo").value);
-
-      const div = document.getElementById("resultado");
-      const msg = document.getElementById("msg");
-
-      div.innerHTML = "";
-      msg.innerHTML = "";
-
-      let resultado = [...dados];
-
-      if (nomeDigitado) {
-        resultado = resultado.filter(p => normalizar(p.Nome).includes(nomeDigitado));
-      }
-
-      if (cargoSelecionado) {
-        resultado = resultado.filter(p => limparTexto(p.Cargo) === cargoSelecionado);
-      }
-
-      if (resultado.length === 0) {
-        msg.innerHTML = "Nenhum resultado encontrado.";
-        return;
-      }
-
-      resultado.forEach(p => {
-        div.innerHTML += `
-          <div class="item destaque">
-            <div class="nome">${p.Nome || "-"}</div>
-            <div class="cargo">${p.Cargo || ""}</div>
-            <div class="info"><strong>Classificação:</strong> ${p.Classificacao || "-"}</div>
-            <div class="info"><strong>Cota Negro:</strong> ${p.CotaNegro || "-"}</div>
-            <div class="info"><strong>PCD:</strong> ${p.PCD || "-"}</div>
-          </div>
-        `;
-      });
-
-      msg.innerHTML = `${resultado.length} resultado(s) encontrado(s).`;
-    }
-
-    async function carregarExcel() {
-      const msg = document.getElementById("msg");
-
-      try {
-        const resposta = await fetch(arquivo);
-
-        if (!resposta.ok) {
-          throw new Error("Arquivo não encontrado: " + arquivo);
-        }
-
-        const data = await resposta.arrayBuffer();
-        const wb = XLSX.read(data, { type: "array" });
-
-        if (!wb.SheetNames || wb.SheetNames.length === 0) {
-          throw new Error("O Excel não possui abas.");
-        }
-
-        const ws = wb.Sheets[wb.SheetNames[0]];
-        const bruto = XLSX.utils.sheet_to_json(ws, { defval: "" });
-
-        dados = bruto
-          .map(transformarLinha)
-          .filter(item => item.Nome !== "");
-
-        if (dados.length === 0) {
-          throw new Error("Nenhum dado válido foi encontrado na primeira aba.");
-        }
-
-        preencherCargos();
-        mostrarCargosNoTitulo();
-        msg.innerHTML = "Arquivo carregado com sucesso.";
-      } catch (erro) {
-        console.error(erro);
-        msg.innerHTML = `<span class="erro">Erro ao carregar o Excel: ${erro.message}</span>`;
-      }
-    }
-
-    atualizarContadorVisitas();
-    carregarExcel();
   </script>
 
 </body>
