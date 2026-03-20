@@ -3,7 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>PSS 02 2025 - Administrativo</title>
+  
+  <title>PSS 02 2025 Contagem - Classificação e Resultado Administrativo</title>
+  <meta name="description" content="Consulte aqui a classificação e o resultado do PSS 02 2025 Contagem. Lista de aprovados para cargos administrativos e educação infantil." />
+  <meta name="keywords" content="PSS 02 2025 Contagem, resultado pss contagem 2025, classificação pss 02 2025, prefeitura de contagem pss" />
+  <meta name="author" content="Consultoria PSS" />
+  <link rel="canonical" href="https://go-dumont.github.io/" />
+
   <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
 
   <style>
@@ -47,8 +53,6 @@
       background: white; border-radius: 15px; padding: 15px; border: 1px solid #e2e8f0;
       border-left: 5px solid var(--primary); margin-bottom: 10px;
     }
-    
-    /* ESTILO SEÇÃO PIX ATUALIZADA */
     .apoio-pix {
       text-align: center; margin-top: 40px; padding: 25px;
       background: #f1f5f9; border-radius: var(--radius-lg);
@@ -61,8 +65,6 @@
       transition: 0.3s;
     }
     .pix-box:hover { background: #f8fafc; border-color: var(--primary); }
-    .copy-icon { font-size: 18px; }
-
     .modal-bg {
       position: fixed; inset: 0; background: rgba(15, 23, 42, 0.8);
       display: none; align-items: center; justify-content: center; z-index: 9999;
@@ -83,7 +85,7 @@
 
   <div class="container">
     <div class="topo">
-      <h1>Classificação PSS 02 2025</h1>
+      <h1>Classificação PSS 02 2025 - Contagem</h1>
       <div class="contador-visitas">👁️ Visitas: <span id="v_site">0</span> | 📸 Insta: <span id="v_insta">0</span></div>
     </div>
 
@@ -98,10 +100,10 @@
     </div>
 
     <div class="card">
-      <input type="text" id="inputNome" list="listaNomes" placeholder="Digite seu nome..." />
+      <input type="text" id="inputNome" list="listaNomes" placeholder="Digite seu nome para buscar..." />
       <datalist id="listaNomes"></datalist>
       <select id="selectCargo"><option value="">Todos os cargos</option></select>
-      <button onclick="buscar()">Pesquisar</button>
+      <button onclick="buscar()">Pesquisar Classificação</button>
       <div id="msg" style="text-align:center; margin-top:10px; font-size:14px; color:#64748b;"></div>
     </div>
 
@@ -110,17 +112,15 @@
     <div class="apoio-pix">
       <h3 style="margin-top:0; color: var(--primary);">☕ Apoie o Professor Desenvolvedor</h3>
       <p style="font-size: 14px; color: #475569;">Gostou da página? Ajude a manter o projeto ativo!</p>
-      
       <div class="pix-box" onclick="copiarPix()" id="btnPix">
         <span id="textoPix" style="font-weight: bold; font-family: monospace; font-size: 18px;">31 996174800</span>
         <span class="copy-icon">📋</span>
       </div>
       <p id="feedbackPix" style="font-size: 12px; color: #16a34a; font-weight: bold; height: 15px; margin: 0;"></p>
-      
       <p style="font-size: 12px; color: #64748b; margin-top: 10px;">Toque no número para copiar a chave PIX</p>
     </div>
     
-    <p style="text-align: center; font-size: 12px; color: #94a3b8; margin-top: 20px;">© 2026 - Consultoria PSS</p>
+    <p style="text-align: center; font-size: 12px; color: #94a3b8; margin-top: 20px;">© 2026 - Consultoria PSS Contagem</p>
   </div>
 
   <script>
@@ -128,17 +128,15 @@
     const FORM_ID = "xwvrzqzz";
     let baseDados = [];
 
-    // FUNÇÃO PARA COPIAR PIX
     function copiarPix() {
       const chave = "31996174800";
       navigator.clipboard.writeText(chave).then(() => {
         const feedback = document.getElementById("feedbackPix");
-        feedback.innerText = "Chave copiada com sucesso!";
+        feedback.innerText = "Chave copiada!";
         setTimeout(() => { feedback.innerText = ""; }, 3000);
       });
     }
 
-    // --- ANALYTICS ---
     function gerenciarAnalytics() {
       let visitasSite = parseInt(localStorage.getItem('pss_total_visitas') || "1200");
       visitasSite++;
@@ -166,7 +164,6 @@
       } catch (e) { console.warn("Erro no relatório"); }
     }
 
-    // --- LOGICA EXCEL (PRESERVADA) ---
     function normalizar(t) { return String(t || "").trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, ""); }
     function acharColuna(obj, nomes) {
       const chaves = Object.keys(obj);
@@ -210,7 +207,7 @@
         baseDados.forEach(d => {
           const opt = document.createElement("option"); opt.value = d.Nome; listaNomes.appendChild(opt);
         });
-      } catch (e) { document.getElementById("msg").innerText = "Erro ao ler Excel."; }
+      } catch (e) { document.getElementById("msg").innerText = "Erro ao carregar dados."; }
     }
 
     function buscar() {
