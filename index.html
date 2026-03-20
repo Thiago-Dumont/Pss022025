@@ -445,13 +445,11 @@
       <p>Nível Superior</p>
       <p id="tituloCargos"></p>
 
-      <!-- CONTADOR -->
       <div class="contador-visitas">
         👁️ Visitas: <span id="contadorVisitas">Carregando...</span>
       </div>
     </div>
 
-    <!-- AVISO IR -->
     <div class="link-card aviso-ir">
       <h3>⚠️ Imposto de Renda 2026</h3>
       <p>Prazo do Imposto de Renda menor esse ano.</p>
@@ -460,7 +458,6 @@
       <p>WhatsApp: <strong>31 98348-6936</strong><br>📲 <strong>@santosesoares.contabilidade</strong></p>
     </div>
 
-    <!-- LINK PARA AGENTE DE EDUCAÇÃO INFANTIL -->
     <div class="link-card">
       <h3>Agente de Educação Infantil</h3>
       <p>Para consultar a classificação de Agente de Educação Infantil, acesse a página específica abaixo.</p>
@@ -489,17 +486,16 @@
       try {
         const namespace = "pss-02-2025";
         const key = "visitas-site";
+        const url = `https://countapi.mileshilliard.com/api/v1/hit/${namespace}/${key}`;
 
-        let resposta = await fetch(`https://api.countapi.xyz/get/${namespace}/${key}`);
+        const resposta = await fetch(url, { cache: "no-store" });
 
-        if (resposta.status === 404) {
-          await fetch(`https://api.countapi.xyz/create?namespace=${namespace}&key=${key}&value=0`);
+        if (!resposta.ok) {
+          throw new Error("Falha ao acessar o serviço de contador.");
         }
 
-        resposta = await fetch(`https://api.countapi.xyz/hit/${namespace}/${key}`);
-
         const data = await resposta.json();
-        contador.textContent = data.value;
+        contador.textContent = data.value ?? "indisponível";
       } catch (erro) {
         console.error("Erro no contador:", erro);
         contador.textContent = "indisponível";
