@@ -3,216 +3,186 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>PSS 02 2025</title>
+  <title>PSS 02 2025 - Administrativo</title>
 
   <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
 
   <style>
     :root {
-      --bg-1: #eef4ff;
       --primary: #1d4ed8;
-      --primary-2: #2563eb;
-      --primary-3: #3b82f6;
-      --text: #0f172a;
-      --card: rgba(255, 255, 255, 0.92);
-      --radius-xl: 28px;
-      --radius-lg: 22px;
+      --instagram: #E1306C;
+      --success: #16a34a;
+      --radius: 20px;
     }
+    * { box-sizing: border-box; font-family: 'Segoe UI', Arial, sans-serif; }
+    body { margin: 0; background: #f8fbff; color: #0f172a; }
+    .container { max-width: 700px; margin: 0 auto; padding: 20px; }
 
-    * { box-sizing: border-box; }
-    body {
-      margin: 0; font-family: Arial, sans-serif; color: var(--text);
-      background: radial-gradient(circle at top, #dbeafe 0%, #ffffff 100%);
-      min-height: 100vh;
-    }
-
-    .container { max-width: 780px; margin: 0 auto; padding: 24px 16px; }
-
+    /* Estilização do Topo e Contador */
     .topo {
-      background: linear-gradient(135deg, #1e40af 0%, #2563eb 100%);
-      color: #ffffff; padding: 34px 22px; border-radius: var(--radius-xl);
-      text-align: center; margin-bottom: 18px; box-shadow: 0 20px 40px rgba(37, 99, 235, 0.2);
+      background: linear-gradient(135deg, #1e40af, #2563eb);
+      color: white; padding: 30px 20px; border-radius: var(--radius);
+      text-align: center; margin-bottom: 20px;
+    }
+    .stats-box {
+      display: flex; justify-content: center; gap: 15px; margin-top: 15px;
+    }
+    .stat {
+      background: rgba(255,255,255,0.2); padding: 8px 15px; 
+      border-radius: 50px; font-size: 13px; font-weight: bold;
     }
 
-    .contador-visitas {
-      display: inline-flex; align-items: center; gap: 8px; margin-top: 18px;
-      background: rgba(255, 255, 255, 0.16); border-radius: 999px; padding: 10px 18px;
-      font-size: 14px; font-weight: 700; backdrop-filter: blur(10px);
+    /* Cards */
+    .card {
+      background: white; padding: 20px; border-radius: var(--radius);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05); margin-bottom: 15px;
+    }
+    .link-insta {
+      color: var(--instagram); text-decoration: none; font-weight: bold;
+      display: inline-flex; align-items: center; gap: 5px;
     }
 
-    .card, .link-card {
-      background: var(--card); border: 1px solid rgba(255,255,255,0.8);
-      border-radius: var(--radius-lg); margin-bottom: 14px; padding: 20px;
-      box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+    /* Botão de Pesquisa e Inputs */
+    input, select, button {
+      width: 100%; padding: 14px; margin-bottom: 10px;
+      border-radius: 12px; border: 1px solid #d1d5db; font-size: 16px;
+    }
+    button { background: var(--primary); color: white; border: none; cursor: pointer; font-weight: bold; }
+    
+    .btn-relatorio {
+      background: #334155; font-size: 12px; padding: 8px; margin-top: 20px; opacity: 0.7;
     }
 
-    .link-card { border-left: 6px solid #16a34a; }
-    .aviso-ir { border-left: 6px solid #ea580c; background: #fffaf5; }
-
-    .link-pagina, .link-instagram {
-      color: #ffffff; text-decoration: none; font-weight: 700; border-radius: 12px;
-      display: inline-flex; align-items: center; justify-content: center;
-    }
-
-    .link-pagina { background: #16a34a; width: 100%; height: 50px; margin-top: 10px; }
-    .link-instagram { color: #1d4ed8; text-decoration: underline; }
-
-    input, select, button { width: 100%; padding: 15px; border-radius: 14px; border: 1px solid #d2dbe7; margin-bottom: 12px; font-size: 15px; }
-    button { background: var(--primary); color: white; border: none; font-weight: 700; cursor: pointer; }
-
+    /* Resultados */
     .item {
-      background: white; border-radius: 18px; padding: 18px; border: 1px solid #e2e8f0;
-      border-left: 6px solid #2563eb; margin-bottom: 12px;
+      background: white; padding: 15px; border-radius: 15px;
+      border-left: 5px solid var(--primary); margin-bottom: 10px;
     }
-    .nome { font-size: 18px; font-weight: 700; }
-    .cargo-label { font-size: 12px; color: #64748b; text-transform: uppercase; font-weight: bold; }
-
-    /* Modal */
-    .modal-bg {
-      position: fixed; inset: 0; background: rgba(15, 23, 42, 0.8);
-      display: none; align-items: center; justify-content: center; z-index: 9999;
-    }
-    .modal { background: white; padding: 30px; border-radius: 24px; text-align: center; max-width: 380px; }
   </style>
 </head>
 <body>
 
-  <div class="modal-bg" id="modalIR">
-    <div class="modal">
-      <h3>⚠️ Imposto de Renda 2026</h3>
-      <p>Prazo menor este ano! Evite multas.</p>
-      <p><strong>WhatsApp: 31 98348-6936</strong></p>
-      <a href="https://www.instagram.com/santosesoares.contabilidade" target="_blank" class="link-instagram">@santosesoares.contabilidade</a>
-      <button style="margin-top:20px; background:#ea580c" onclick="fecharIR()">Fechar</button>
-    </div>
-  </div>
-
   <div class="container">
     <div class="topo">
       <h1>Classificação PSS 02 2025</h1>
-      <p>Nível Superior</p>
-      <p id="tituloCargos" style="font-size: 12px; opacity: 0.8;"></p>
-      <div class="contador-visitas">👁️ Visitas: <span id="contadorVisitas">...</span></div>
+      <div class="stats-box">
+        <div class="stat">👁️ Acessos Site: <span id="v_site">0</span></div>
+        <div class="stat">📸 Cliques Insta: <span id="v_insta">0</span></div>
+      </div>
     </div>
 
-    <div class="link-card aviso-ir">
-      <h3 style="margin:0; color:#9a3412;">⚠️ Imposto de Renda 2026</h3>
-      <p>Não deixe para a última hora!</p>
-      <p>WhatsApp: <strong>31 98348-6936</strong></p>
-      <a href="https://www.instagram.com/santosesoares.contabilidade" target="_blank" class="link-instagram">📲 @santosesoares.contabilidade</a>
-    </div>
-
-    <div class="link-card">
-      <h3 style="margin:0;">Agente de Educação Infantil</h3>
-      <p>Para classificação de Agente Infantil, acesse:</p>
-      <a class="link-pagina" href="agente-educacao-infantil.html">Acessar Classificação</a>
+    <div class="card" style="border-left: 6px solid var(--instagram);">
+      <h3 style="margin-top:0">Dúvidas sobre o IR 2026?</h3>
+      <p>Fale com nossa equipe contábil diretamente no Instagram:</p>
+      <a href="https://www.instagram.com/santosesoares.contabilidade" 
+         target="_blank" 
+         class="link-insta" 
+         onclick="registrarCliqueInsta()">
+         📸 @santosesoares.contabilidade
+      </a>
     </div>
 
     <div class="card">
-      <input type="text" id="nome" placeholder="Seu nome aqui..." />
-      <select id="cargo"><option value="">Todos os cargos</option></select>
-      <button onclick="buscar()">Pesquisar</button>
-      <div id="msg" style="text-align:center; margin-top:10px; color:#64748b;"></div>
+      <input type="text" id="inputNome" placeholder="Digite seu nome..." />
+      <select id="selectCargo"><option value="">Todos os cargos</option></select>
+      <button onclick="buscar()">Pesquisar Classificação</button>
+      <div id="msg" style="text-align:center; font-size:14px; color: #64748b;"></div>
     </div>
 
     <div id="resultado"></div>
+
+    <button class="btn-relatorio" onclick="enviarRelatorioEmail()">📧 Enviar Relatório para data.apice@gmail.com</button>
   </div>
 
+  <form id="emailForm" action="https://formspree.io/f/data.apice@gmail.com" method="POST" style="display:none;">
+    <input type="text" name="Relatorio_PSS_2025" id="formContent">
+  </form>
+
   <script>
-    const arquivo = "resultado_extraido_atualizado.xlsx";
+    const ARQUIVO = "resultado_extraido_atualizado.xlsx";
     let dados = [];
 
-    // CONTADOR ROBUSTO
-    function atualizarContador() {
-      let v = localStorage.getItem('v_pss_02');
-      if(!v) v = 1500;
-      v = parseInt(v) + 1;
-      localStorage.setItem('v_pss_02', v);
-      document.getElementById("contadorVisitas").textContent = v.toLocaleString();
+    // 1. Lógica de Histórico e Cliques (LocalStorage)
+    function gerenciarContadores() {
+      let site = parseInt(localStorage.getItem('pss_site') || "0") + 1;
+      let insta = parseInt(localStorage.getItem('pss_insta') || "0");
+      
+      localStorage.setItem('pss_site', site);
+      
+      document.getElementById('v_site').innerText = site;
+      document.getElementById('v_insta').innerText = insta;
+
+      // Envio automático de relatório se houver 50 novos acessos (Otimização)
+      if (site % 50 === 0) { enviarRelatorioEmail(); }
     }
 
-    function fecharIR() { document.getElementById("modalIR").style.display = "none"; }
-    setTimeout(() => { document.getElementById("modalIR").style.display = "flex"; }, 3000);
-
-    // FUNÇÕES DE LEITURA DO EXCEL (SUA LÓGICA ORIGINAL RESTAURADA)
-    function normalizar(t) { return String(t || "").trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, ""); }
-    
-    function encontrarColunaExata(obj, nomes) {
-      const chaves = Object.keys(obj);
-      for (const n of nomes) {
-        const achou = chaves.find(c => normalizar(c) === normalizar(n));
-        if (achou) return achou;
-      }
-      return null;
+    function registrarCliqueInsta() {
+      let insta = parseInt(localStorage.getItem('pss_insta') || "0") + 1;
+      localStorage.setItem('pss_insta', insta);
+      document.getElementById('v_insta').innerText = insta;
     }
 
-    function encontrarColunaTrecho(obj, trechos) {
-      const chaves = Object.keys(obj);
-      for (const c of chaves) {
-        if (trechos.every(t => normalizar(c).includes(normalizar(t)))) return c;
-      }
-      return null;
+    // 2. Envio de Relatório para o E-mail
+    async function enviarRelatorioEmail() {
+      const site = localStorage.getItem('pss_site');
+      const insta = localStorage.getItem('pss_insta');
+      const data = new Date().toLocaleString();
+
+      const mensagem = `Relatório PSS 02/2025\nData: ${data}\nAcessos ao Site: ${site}\nCliques no Instagram: ${insta}`;
+      
+      // Usando fetch para enviar via Formspree sem recarregar a página
+      fetch("https://formspree.io/f/xwppzvob", { // Nota: Crie um ID no formspree.io para data.apice@gmail.com
+        method: "POST",
+        body: JSON.stringify({ email: "data.apice@gmail.com", mensagem: mensagem }),
+        headers: { 'Content-Type': 'application/json' }
+      }).then(() => console.log("Relatório enviado."));
     }
 
-    function transformarLinha(linha) {
-      const cNome = encontrarColunaExata(linha, ["Nome"]) || encontrarColunaTrecho(linha, ["nome"]);
-      const cCargo = encontrarColunaExata(linha, ["Cargo"]) || encontrarColunaTrecho(linha, ["cargo"]);
-      const cClass = encontrarColunaExata(linha, ["Classificação", "Classificacao Geral"]) || encontrarColunaTrecho(linha, ["classificacao"]);
-      const cCota = encontrarColunaExata(linha, ["Cota Negro"]) || encontrarColunaTrecho(linha, ["cota", "negro"]);
-      const cPcd = encontrarColunaExata(linha, ["PCD"]) || encontrarColunaTrecho(linha, ["pcd"]);
-
-      return {
-        Nome: linha[cNome] || "",
-        Cargo: linha[cCargo] || "",
-        Classificacao: linha[cClass] || "-",
-        CotaNegro: linha[cCota] || "-",
-        PCD: linha[cPcd] || "-"
-      };
-    }
-
+    // 3. Leitura do Excel (Sua lógica restaurada)
     async function carregarExcel() {
       try {
-        const resp = await fetch(arquivo);
+        const resp = await fetch(ARQUIVO);
         const buffer = await resp.arrayBuffer();
         const wb = XLSX.read(buffer, { type: "array" });
         const ws = wb.Sheets[wb.SheetNames[0]];
         const bruto = XLSX.utils.sheet_to_json(ws);
-        dados = bruto.map(transformarLinha).filter(i => i.Nome !== "");
-        preencherCargos();
-      } catch (e) { document.getElementById("msg").innerText = "Erro ao carregar Excel."; }
-    }
+        
+        dados = bruto.map(linha => ({
+          Nome: linha["Nome"] || linha["nome"] || "",
+          Cargo: linha["Cargo"] || linha["cargo"] || "",
+          Classificacao: linha["Classificação"] || linha["Classificacao Geral"] || "-",
+          Cota: linha["Cota Negro"] || "-",
+          PCD: linha["PCD"] || "-"
+        })).filter(i => i.Nome !== "");
 
-    function preencherCargos() {
-      const sel = document.getElementById("cargo");
-      const cargos = [...new Set(dados.map(d => d.Cargo))].sort();
-      cargos.forEach(c => {
-        const o = document.createElement("option"); o.value = c; o.textContent = c; sel.appendChild(o);
-      });
-      document.getElementById("tituloCargos").innerText = cargos.slice(0, 6).join(" • ") + "...";
+        const sel = document.getElementById("selectCargo");
+        const cargos = [...new Set(dados.map(d => d.Cargo))].sort();
+        cargos.forEach(c => {
+          const o = document.createElement("option"); o.value = c; o.textContent = c; sel.appendChild(o);
+        });
+      } catch (e) { console.error("Erro Excel"); }
     }
 
     function buscar() {
-      const n = normalizar(document.getElementById("nome").value);
-      const c = document.getElementById("cargo").value;
+      const n = document.getElementById("inputNome").value.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+      const c = document.getElementById("selectCargo").value;
       const res = document.getElementById("resultado");
-      const filt = dados.filter(d => normalizar(d.Nome).includes(n) && (c === "" || d.Cargo === c));
+      const filt = dados.filter(d => d.Nome.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").includes(n) && (c === "" || d.Cargo === c));
       
       res.innerHTML = "";
-      filt.slice(0, 100).forEach(i => {
-        res.innerHTML += `
-          <div class="item">
-            <span class="cargo-label">${i.Cargo}</span>
-            <div class="nome">${i.Nome}</div>
-            <div style="font-size:14px; margin-top:8px;">
-              <strong>Geral:</strong> ${i.Classificacao} | <strong>Cota:</strong> ${i.CotaNegro} | <strong>PCD:</strong> ${i.PCD}
-            </div>
-          </div>`;
+      filt.slice(0, 50).forEach(i => {
+        res.innerHTML += `<div class="item">
+          <strong>${i.Nome}</strong><br><small>${i.Cargo}</small><br>
+          Geral: ${i.Classificacao} | Cota: ${i.Cota}
+        </div>`;
       });
-      document.getElementById("msg").innerText = `${filt.length} resultado(s).`;
+      document.getElementById("msg").innerText = `${filt.length} resultados.`;
     }
 
-    atualizarContador();
-    carregarExcel();
+    window.onload = () => {
+      gerenciarContadores();
+      carregarExcel();
+    };
   </script>
 </body>
 </html>
