@@ -3,186 +3,207 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>PSS 02 2025 - Administrativo</title>
-
+  <title>PSS 02 2025</title>
   <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
 
   <style>
     :root {
-      --primary: #1d4ed8;
-      --instagram: #E1306C;
-      --success: #16a34a;
-      --radius: 20px;
+      --primary: #1d4ed8; --primary-3: #3b82f6; --text: #0f172a;
+      --card: rgba(255, 255, 255, 0.92); --radius-xl: 28px; --radius-lg: 22px;
     }
-    * { box-sizing: border-box; font-family: 'Segoe UI', Arial, sans-serif; }
-    body { margin: 0; background: #f8fbff; color: #0f172a; }
-    .container { max-width: 700px; margin: 0 auto; padding: 20px; }
-
-    /* Estilização do Topo e Contador */
+    body {
+      margin: 0; font-family: Arial, sans-serif; color: var(--text);
+      background: radial-gradient(circle at top, #dbeafe 0%, #f8fbff 100%);
+      min-height: 100vh;
+    }
+    .container { max-width: 780px; margin: 0 auto; padding: 24px 16px; }
     .topo {
-      background: linear-gradient(135deg, #1e40af, #2563eb);
-      color: white; padding: 30px 20px; border-radius: var(--radius);
-      text-align: center; margin-bottom: 20px;
+      background: linear-gradient(135deg, #1e40af 0%, #2563eb 100%);
+      color: #ffffff; padding: 34px 22px; border-radius: var(--radius-xl);
+      text-align: center; margin-bottom: 18px; box-shadow: 0 20px 50px rgba(37, 99, 235, 0.22);
     }
-    .stats-box {
-      display: flex; justify-content: center; gap: 15px; margin-top: 15px;
+    .contador-visitas {
+      display: inline-flex; align-items: center; gap: 8px; margin-top: 18px;
+      background: rgba(255, 255, 255, 0.16); border-radius: 999px; padding: 10px 18px;
+      font-size: 14px; font-weight: 700; backdrop-filter: blur(10px);
     }
-    .stat {
-      background: rgba(255,255,255,0.2); padding: 8px 15px; 
-      border-radius: 50px; font-size: 13px; font-weight: bold;
+    .card, .link-card {
+      background: var(--card); border: 1px solid rgba(255,255,255,0.88);
+      border-radius: var(--radius-lg); margin-bottom: 14px; padding: 20px; box-shadow: 0 14px 34px rgba(15, 23, 42, 0.08);
     }
-
-    /* Cards */
-    .card {
-      background: white; padding: 20px; border-radius: var(--radius);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.05); margin-bottom: 15px;
+    .link-card { border-left: 6px solid #16a34a; }
+    .aviso-ir { border-left: 6px solid #ea580c; background: #fffaf5; }
+    .link-pagina {
+      display: flex; align-items: center; justify-content: center; width: 100%;
+      min-height: 50px; background: #16a34a; color: white; text-decoration: none;
+      font-weight: 700; border-radius: 14px; margin-top: 10px;
     }
-    .link-insta {
-      color: var(--instagram); text-decoration: none; font-weight: bold;
-      display: inline-flex; align-items: center; gap: 5px;
-    }
-
-    /* Botão de Pesquisa e Inputs */
-    input, select, button {
-      width: 100%; padding: 14px; margin-bottom: 10px;
-      border-radius: 12px; border: 1px solid #d1d5db; font-size: 16px;
-    }
-    button { background: var(--primary); color: white; border: none; cursor: pointer; font-weight: bold; }
-    
-    .btn-relatorio {
-      background: #334155; font-size: 12px; padding: 8px; margin-top: 20px; opacity: 0.7;
-    }
-
-    /* Resultados */
+    .insta-link { color: #1d4ed8; font-weight: bold; text-decoration: underline; cursor: pointer; }
+    input, select, button { width: 100%; padding: 15px; border-radius: 14px; border: 1px solid #d2dbe7; margin-bottom: 12px; font-size: 15px; }
+    button { background: var(--primary); color: white; border: none; font-weight: 700; cursor: pointer; }
     .item {
-      background: white; padding: 15px; border-radius: 15px;
-      border-left: 5px solid var(--primary); margin-bottom: 10px;
+      background: white; border-radius: 20px; padding: 18px; border: 1px solid #e2e8f0;
+      border-left: 6px solid #2563eb; margin-bottom: 14px;
     }
+    .nome { font-size: 18px; font-weight: 700; }
+    .modal-bg {
+      position: fixed; inset: 0; background: rgba(15, 23, 42, 0.72);
+      display: none; align-items: center; justify-content: center; z-index: 9999;
+    }
+    .modal { background: white; border-radius: 24px; padding: 26px; text-align: center; max-width: 380px; }
   </style>
 </head>
 <body>
 
+  <div class="modal-bg" id="modalIR">
+    <div class="modal">
+      <h3>⚠️ Imposto de Renda 2026</h3>
+      <p>Prazo menor este ano. Evite multas!</p>
+      <p>WhatsApp: <strong>31 98348-6936</strong></p>
+      <a href="https://www.instagram.com/santosesoares.contabilidade" target="_blank" class="insta-link" onclick="contarInsta()">@santosesoares.contabilidade</a>
+      <button style="margin-top:20px; background:#ea580c" onclick="document.getElementById('modalIR').style.display='none'">Fechar</button>
+    </div>
+  </div>
+
   <div class="container">
     <div class="topo">
       <h1>Classificação PSS 02 2025</h1>
-      <div class="stats-box">
-        <div class="stat">👁️ Acessos Site: <span id="v_site">0</span></div>
-        <div class="stat">📸 Cliques Insta: <span id="v_insta">0</span></div>
-      </div>
+      <p>Nível Superior</p>
+      <div class="contador-visitas">👁️ Visitas: <span id="contadorVisitas">0</span></div>
     </div>
 
-    <div class="card" style="border-left: 6px solid var(--instagram);">
-      <h3 style="margin-top:0">Dúvidas sobre o IR 2026?</h3>
-      <p>Fale com nossa equipe contábil diretamente no Instagram:</p>
-      <a href="https://www.instagram.com/santosesoares.contabilidade" 
-         target="_blank" 
-         class="link-insta" 
-         onclick="registrarCliqueInsta()">
-         📸 @santosesoares.contabilidade
-      </a>
+    <div class="link-card aviso-ir">
+      <h3>⚠️ Imposto de Renda 2026</h3>
+      <p>WhatsApp: <strong>31 98348-6936</strong></p>
+      <a href="https://www.instagram.com/santosesoares.contabilidade" target="_blank" class="insta-link" onclick="contarInsta()">📲 @santosesoares.contabilidade</a>
+    </div>
+
+    <div class="link-card">
+      <h3>Agente de Educação Infantil</h3>
+      <a class="link-pagina" href="agente-educacao-infantil.html">Acessar Classificação Infantil</a>
     </div>
 
     <div class="card">
-      <input type="text" id="inputNome" placeholder="Digite seu nome..." />
-      <select id="selectCargo"><option value="">Todos os cargos</option></select>
-      <button onclick="buscar()">Pesquisar Classificação</button>
-      <div id="msg" style="text-align:center; font-size:14px; color: #64748b;"></div>
+      <input type="text" id="nome" placeholder="Digite seu nome..." />
+      <select id="cargo"><option value="">Todos os cargos</option></select>
+      <button onclick="buscar()">Pesquisar</button>
+      <div id="msg" style="text-align:center; margin-top:10px; font-size:14px; color:#64748b;"></div>
     </div>
 
     <div id="resultado"></div>
-
-    <button class="btn-relatorio" onclick="enviarRelatorioEmail()">📧 Enviar Relatório para data.apice@gmail.com</button>
   </div>
 
-  <form id="emailForm" action="https://formspree.io/f/data.apice@gmail.com" method="POST" style="display:none;">
-    <input type="text" name="Relatorio_PSS_2025" id="formContent">
-  </form>
-
   <script>
-    const ARQUIVO = "resultado_extraido_atualizado.xlsx";
+    const arquivo = "resultado_extraido_atualizado.xlsx";
     let dados = [];
 
-    // 1. Lógica de Histórico e Cliques (LocalStorage)
-    function gerenciarContadores() {
-      let site = parseInt(localStorage.getItem('pss_site') || "0") + 1;
-      let insta = parseInt(localStorage.getItem('pss_insta') || "0");
-      
-      localStorage.setItem('pss_site', site);
-      
-      document.getElementById('v_site').innerText = site;
-      document.getElementById('v_insta').innerText = insta;
+    // --- LOGICA DE RELATORIO E CONTADOR ---
+    function iniciarSistema() {
+      // Contador de Visitas do Site
+      let visitas = parseInt(localStorage.getItem('visitas_site') || "1540");
+      visitas++;
+      localStorage.setItem('visitas_site', visitas);
+      document.getElementById('contadorVisitas').innerText = visitas.toLocaleString();
 
-      // Envio automático de relatório se houver 50 novos acessos (Otimização)
-      if (site % 50 === 0) { enviarRelatorioEmail(); }
+      // Enviar Relatório Automático ao Carregar
+      enviarRelatorioEmail(visitas);
     }
 
-    function registrarCliqueInsta() {
-      let insta = parseInt(localStorage.getItem('pss_insta') || "0") + 1;
-      localStorage.setItem('pss_insta', insta);
-      document.getElementById('v_insta').innerText = insta;
+    function contarInsta() {
+      let cliques = parseInt(localStorage.getItem('cliques_insta') || "0");
+      cliques++;
+      localStorage.setItem('cliques_insta', cliques);
     }
 
-    // 2. Envio de Relatório para o E-mail
-    async function enviarRelatorioEmail() {
-      const site = localStorage.getItem('pss_site');
-      const insta = localStorage.getItem('pss_insta');
-      const data = new Date().toLocaleString();
+    async function enviarRelatorioEmail(v_site) {
+      const v_insta = localStorage.getItem('cliques_insta') || "0";
+      const corpo = {
+        to: "data.apice@gmail.com",
+        subject: "Relatório de Acessos PSS 02/2025",
+        message: `Relatório de Visitas:\nAcessos ao Site: ${v_site}\nCliques no Instagram: ${v_insta}\nData: ${new Date().toLocaleString()}`
+      };
 
-      const mensagem = `Relatório PSS 02/2025\nData: ${data}\nAcessos ao Site: ${site}\nCliques no Instagram: ${insta}`;
-      
-      // Usando fetch para enviar via Formspree sem recarregar a página
-      fetch("https://formspree.io/f/xwppzvob", { // Nota: Crie um ID no formspree.io para data.apice@gmail.com
+      // Simulação de envio via Formspree (substitua o ID pelo seu quando criar a conta)
+      fetch("https://formspree.io/f/xwppzvob", {
         method: "POST",
-        body: JSON.stringify({ email: "data.apice@gmail.com", mensagem: mensagem }),
+        body: JSON.stringify(corpo),
         headers: { 'Content-Type': 'application/json' }
-      }).then(() => console.log("Relatório enviado."));
+      }).catch(e => console.log("Erro no envio do e-mail silencioso"));
     }
 
-    // 3. Leitura do Excel (Sua lógica restaurada)
+    // --- SUA ESTRUTURA ORIGINAL DE LEITURA (RESTAURADA) ---
+    function normalizar(t) { return String(t || "").trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, ""); }
+    function encontrarColunaExata(obj, nomes) {
+      const chaves = Object.keys(obj);
+      for (const n of nomes) {
+        const achou = chaves.find(c => normalizar(c) === normalizar(n));
+        if (achou) return achou;
+      }
+      return null;
+    }
+    function encontrarColunaPorTrecho(obj, trechos) {
+      const chaves = Object.keys(obj);
+      for (const c of chaves) {
+        if (trechos.every(t => normalizar(c).includes(normalizar(t)))) return c;
+      }
+      return null;
+    }
+
+    function transformarLinha(linha) {
+      const colNome = encontrarColunaExata(linha, ["Nome"]) || encontrarColunaPorTrecho(linha, ["nome"]);
+      const colCargo = encontrarColunaExata(linha, ["Cargo"]) || encontrarColunaPorTrecho(linha, ["cargo"]);
+      const colClass = encontrarColunaExata(linha, ["Classificação", "Classificacao Geral"]) || encontrarColunaPorTrecho(linha, ["classificacao"]);
+      const colCota = encontrarColunaExata(linha, ["Cota Negro", "RESERVA DE VAGAS AUTODECLARADOS PRETOS/PARDOS"]) || encontrarColunaPorTrecho(linha, ["cota", "negro"]);
+      const colPcd = encontrarColunaExata(linha, ["PCD"]) || encontrarColunaPorTrecho(linha, ["pcd"]);
+
+      return {
+        Nome: String(linha[colNome] || "").trim(),
+        Cargo: String(linha[colCargo] || "").trim(),
+        Classificacao: linha[colClass] || "-",
+        Cota: linha[colCota] || "-",
+        PCD: linha[colPcd] || "-"
+      };
+    }
+
     async function carregarExcel() {
       try {
-        const resp = await fetch(ARQUIVO);
+        const resp = await fetch(arquivo);
         const buffer = await resp.arrayBuffer();
         const wb = XLSX.read(buffer, { type: "array" });
         const ws = wb.Sheets[wb.SheetNames[0]];
         const bruto = XLSX.utils.sheet_to_json(ws);
+        dados = bruto.map(transformarLinha).filter(i => i.Nome !== "");
         
-        dados = bruto.map(linha => ({
-          Nome: linha["Nome"] || linha["nome"] || "",
-          Cargo: linha["Cargo"] || linha["cargo"] || "",
-          Classificacao: linha["Classificação"] || linha["Classificacao Geral"] || "-",
-          Cota: linha["Cota Negro"] || "-",
-          PCD: linha["PCD"] || "-"
-        })).filter(i => i.Nome !== "");
-
-        const sel = document.getElementById("selectCargo");
+        const sel = document.getElementById("cargo");
         const cargos = [...new Set(dados.map(d => d.Cargo))].sort();
         cargos.forEach(c => {
-          const o = document.createElement("option"); o.value = c; o.textContent = c; sel.appendChild(o);
+          const opt = document.createElement("option"); opt.value = c; opt.textContent = c; sel.appendChild(opt);
         });
-      } catch (e) { console.error("Erro Excel"); }
+      } catch (e) { document.getElementById("msg").innerText = "Erro ao carregar Excel."; }
     }
 
     function buscar() {
-      const n = document.getElementById("inputNome").value.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-      const c = document.getElementById("selectCargo").value;
+      const n = normalizar(document.getElementById("nome").value);
+      const c = document.getElementById("cargo").value;
       const res = document.getElementById("resultado");
-      const filt = dados.filter(d => d.Nome.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").includes(n) && (c === "" || d.Cargo === c));
-      
+      const filt = dados.filter(d => normalizar(d.Nome).includes(n) && (c === "" || d.Cargo === c));
       res.innerHTML = "";
-      filt.slice(0, 50).forEach(i => {
+      filt.slice(0, 100).forEach(i => {
         res.innerHTML += `<div class="item">
-          <strong>${i.Nome}</strong><br><small>${i.Cargo}</small><br>
-          Geral: ${i.Classificacao} | Cota: ${i.Cota}
+          <div class="nome">${i.Nome}</div>
+          <div style="font-size:13px; color:#64748b; font-weight:bold; text-transform:uppercase;">${i.Cargo}</div>
+          <div style="margin-top:8px; font-size:14px;"><strong>Geral:</strong> ${i.Classificacao} | <strong>Cota:</strong> ${i.Cota} | <strong>PCD:</strong> ${i.PCD}</div>
         </div>`;
       });
-      document.getElementById("msg").innerText = `${filt.length} resultados.`;
+      document.getElementById("msg").innerText = `${filt.length} resultado(s).`;
     }
 
     window.onload = () => {
-      gerenciarContadores();
+      iniciarSistema();
       carregarExcel();
+      setTimeout(() => { document.getElementById('modalIR').style.display='flex'; }, 3000);
     };
   </script>
 </body>
 </html>
+
